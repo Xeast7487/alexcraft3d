@@ -19,7 +19,6 @@ export default async function DashboardPage() {
 
   const commandesActives = (commandes || []).filter((c) => c.statut !== "livre");
 
-  console.log("[dashboard] fournitures raw:", JSON.stringify(fournitures));
   const fournituresTotales = (fournitures || []).reduce((sum, f) => sum + Number(f.montant), 0);
   const fournituresnonfacturees = (fournitures || [])
     .filter((f) => !f.est_facture)

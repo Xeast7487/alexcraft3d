@@ -19,9 +19,6 @@ export default async function SoumissionPage({ params }: { params: { id: string 
   const client = (clients || []).find((c) => c.id === commande.client_id) || null;
 
   const total = totalCommande(items || []);
-  const tps = total * 0.05;
-  const tvq = total * 0.09975;
-  const totalTaxes = total + tps + tvq;
   const dateStr = new Date().toLocaleDateString("fr-CA", { year: "numeric", month: "long", day: "numeric" });
 
   return (
@@ -53,7 +50,7 @@ export default async function SoumissionPage({ params }: { params: { id: string 
           <div>
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">De</p>
             <p className="font-semibold">AlexCraft3D</p>
-            <p className="text-gray-600 text-sm">alexcraft3d@gmail.com</p>
+            <p className="text-gray-600 text-sm">nstudio259@gmail.com</p>
           </div>
           {client && (
             <div>
@@ -105,21 +102,9 @@ export default async function SoumissionPage({ params }: { params: { id: string 
 
         <div className="flex justify-end">
           <div className="w-64 space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Sous-total</span>
-              <span className="font-medium">{formatMontant(total)}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">TPS (5%)</span>
-              <span>{formatMontant(tps)}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">TVQ (9.975%)</span>
-              <span>{formatMontant(tvq)}</span>
-            </div>
-            <div className="flex justify-between font-bold text-lg border-t-2 border-gray-900 pt-2 mt-2">
+            <div className="flex justify-between font-bold text-lg border-t-2 border-gray-900 pt-2">
               <span>Total</span>
-              <span>{formatMontant(totalTaxes)}</span>
+              <span>{formatMontant(total)}</span>
             </div>
             {commande.montant_recu > 0 && (
               <>
@@ -129,7 +114,7 @@ export default async function SoumissionPage({ params }: { params: { id: string 
                 </div>
                 <div className="flex justify-between font-bold text-orange-600 border-t border-gray-200 pt-2">
                   <span>Solde dû</span>
-                  <span>{formatMontant(Math.max(0, totalTaxes - commande.montant_recu))}</span>
+                  <span>{formatMontant(Math.max(0, total - commande.montant_recu))}</span>
                 </div>
               </>
             )}
@@ -138,7 +123,7 @@ export default async function SoumissionPage({ params }: { params: { id: string 
 
         <div className="mt-16 pt-8 border-t border-gray-200 text-center text-sm text-gray-400">
           <p>Merci pour votre confiance ! 🖨️</p>
-          <p className="mt-1">alexcraft3d@gmail.com</p>
+          <p className="mt-1">nstudio259@gmail.com</p>
         </div>
       </div>
     </div>
