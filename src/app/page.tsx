@@ -5,26 +5,25 @@ import Link from "next/link";
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const [{ data: commandes }, { data: clients }, { data: items }, { data: fournitures }] =
+  const [{ data: commandes }, { data: clients }, { data: fournitures }] =
     await Promise.all([
-      supabase.from("ac3d_commandes").select("*, ac3d_clients(nom)").order("created_at", { ascending: false }),
+      supabase
+        .from("ac3d_commandes")
+        .select("*, ac3d_clients(nom), ac3d_items(prix)")
+        .order("created_at", { ascending: false }),
       supabase.from("ac3d_clients").select("id"),
-      supabase.from("ac3d_items").select("prix, statut"),
       supabase.from("ac3d_fournitures").select("montant, est_facture"),
     ]);
 
-  const totalCA = (commandes || []).reduce((sum, c) => {
-    const itemsTotaux = (items || []).filter(() => true); // all items across commandes
-    return sum;
+  // Compute totals directly from the joined items (same source as the list)
+  const totalPrix = (commandes || []).reduce((sum, c) => {
+    const itemsTotal = (c.ac3d_items || []).reduce((s: number, i: { prix: number }) => s + i.prix, 0);
+    return sum + itemsTotal;
   }, 0);
-
-  const allItems = items || [];
-  const totalPrix = allItems.reduce((sum, i) => sum + i.prix, 0);
-  const totalRecu = (commandes || []).reduce((sum, c) => sum + c.montant_recu, 0);
+  const totalRecu = (commandes || []).reduce((sum, c) => sum + (c.montant_recu ?? 0), 0);
   const enAttente = totalPrix - totalRecu;
 
   const commandesActives = (commandes || []).filter((c) => c.statut !== "livre");
-  const commandesLivrees = (commandes || []).filter((c) => c.statut === "livre");
 
   const fournituresTotales = (fournitures || []).reduce((sum, f) => sum + f.montant, 0);
   const fournituresnonfacturees = (fournitures || [])
@@ -59,23 +58,31 @@ export default async function DashboardPage() {
             <p className="text-muted text-sm">Aucune commande.</p>
           ) : (
             <div className="space-y-2">
-              {recentCommandes.map((c) => (
-                <Link
-                  key={c.id}
-                  href={`/commandes/${c.id}`}
-                  className="flex items-center justify-between p-3 rounded-lg hover:bg-border transition-colors"
-                >
-                  <div>
-                    <p className="text-sm font-medium text-white">{c.titre}</p>
-                    {c.ac3d_clients && (
-                      <p className="text-xs text-muted">{c.ac3d_clients.nom}</p>
-                    )}
-                  </div>
-                  <span className={`text-xs px-2 py-0.5 rounded-full border ${statutColor(c.statut)}`}>
-                    {statutLabel(c.statut)}
-                  </span>
-                </Link>
-              ))}
+              {recentCommandes.map((c) => {
+                const itemsTotal = (c.ac3d_items || []).reduce((s: number, i: { prix: number }) => s + i.prix, 0);
+                return (
+                  <Link
+                    key={c.id}
+                    href={`/commandes/${c.id}`}
+                    className="flex items-center justify-between p-3 rounded-lg hover:bg-border transition-colors"
+                  >
+                    <div>
+                      <p className="text-sm font-medium text-white">{c.titre}</p>
+                      {c.ac3d_clients && (
+                        <p className="text-xs text-muted">{c.ac3d_clients.nom}</p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {itemsTotal > 0 && (
+                        <span className="text-xs text-muted">{formatMontant(itemsTotal)}</span>
+                      )}
+                      <span className={`text-xs px-2 py-0.5 rounded-full border ${statutColor(c.statut)}`}>
+                        {statutLabel(c.statut)}
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           )}
         </div>
