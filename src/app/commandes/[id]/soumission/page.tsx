@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { formatMontant, formatTemps, totalCommande } from "@/lib/utils";
 import { notFound } from "next/navigation";
+import PrintButton from "./PrintButton";
 
 export const dynamic = "force-dynamic";
 
@@ -26,12 +27,7 @@ export default async function SoumissionPage({ params }: { params: { id: string 
   return (
     <div className="min-h-screen bg-white text-gray-900">
       <div className="no-print fixed top-4 right-4 flex gap-2">
-        <button
-          onClick={() => window.print()}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg"
-        >
-          🖨️ Imprimer / PDF
-        </button>
+        <PrintButton />
         <a
           href={`/commandes/${id}`}
           className="bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg"
