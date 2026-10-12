@@ -19,10 +19,10 @@ export default async function DashboardPage() {
 
   const commandesActives = (commandes || []).filter((c) => c.statut !== "livre");
 
-  const fournituresTotales = (fournitures || []).reduce((sum, f) => sum + f.montant, 0);
+  const fournituresTotales = (fournitures || []).reduce((sum, f) => sum + Number(f.montant), 0);
   const fournituresnonfacturees = (fournitures || [])
     .filter((f) => !f.est_facture)
-    .reduce((sum, f) => sum + f.montant, 0);
+    .reduce((sum, f) => sum + Number(f.montant), 0);
 
   const recentCommandes = (commandes || []).slice(0, 5);
 

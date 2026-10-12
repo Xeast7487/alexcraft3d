@@ -7,12 +7,15 @@ export const dynamic = "force-dynamic";
 export default async function SoumissionPage({ params }: { params: { id: string } }) {
   const id = Number(params.id);
 
-  const [{ data: commande }, { data: items }] = await Promise.all([
-    supabase.from("ac3d_commandes").select("*, ac3d_clients(*)").eq("id", id).single(),
+  const [{ data: commande }, { data: items }, { data: clients }] = await Promise.all([
+    supabase.from("ac3d_commandes").select("*").eq("id", id).single(),
     supabase.from("ac3d_items").select("*").eq("commande_id", id).order("id"),
+    supabase.from("ac3d_clients").select("*"),
   ]);
 
   if (!commande) notFound();
+
+  const client = (clients || []).find((c) => c.id === commande.client_id) || null;
 
   const total = totalCommande(items || []);
   const tps = total * 0.05;
@@ -56,15 +59,15 @@ export default async function SoumissionPage({ params }: { params: { id: string 
             <p className="font-semibold">AlexCraft3D</p>
             <p className="text-gray-600 text-sm">alexcraft3d@gmail.com</p>
           </div>
-          {commande.ac3d_clients && (
+          {client && (
             <div>
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Pour</p>
-              <p className="font-semibold">{commande.ac3d_clients.nom}</p>
-              {commande.ac3d_clients.email && (
-                <p className="text-gray-600 text-sm">{commande.ac3d_clients.email}</p>
+              <p className="font-semibold">{client.nom}</p>
+              {client.email && (
+                <p className="text-gray-600 text-sm">{client.email}</p>
               )}
-              {commande.ac3d_clients.telephone && (
-                <p className="text-gray-600 text-sm">{commande.ac3d_clients.telephone}</p>
+              {client.telephone && (
+                <p className="text-gray-600 text-sm">{client.telephone}</p>
               )}
             </div>
           )}
