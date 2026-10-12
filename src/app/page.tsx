@@ -44,7 +44,7 @@ export default async function DashboardPage() {
         <StatCard label="Clients" value={String(clients?.length ?? 0)} icon="👤" />
         <StatCard label="Commandes actives" value={String(commandesActives.length)} icon="🔄" />
         <StatCard label="À recevoir" value={formatMontant(Math.max(0, enAttente))} icon="💰" highlight />
-        <StatCard label="Fournitures non facturées" value={formatMontant(fournituresnonfacturees)} icon="🛒" />
+        <StatCard label="Fournitures à rembourser" value={formatMontant(fournituresnonfacturees)} icon="🛒" />
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -88,7 +88,7 @@ export default async function DashboardPage() {
             <FinRow label="Solde à recevoir" value={formatMontant(Math.max(0, enAttente))} color="text-status-print" />
             <div className="border-t border-border pt-3">
               <FinRow label="Fournitures commandées" value={formatMontant(fournituresTotales)} />
-              <FinRow label="Non facturées au client" value={formatMontant(fournituresnonfacturees)} color="text-status-cours" />
+              <FinRow label="À rembourser (carte)" value={formatMontant(fournituresnonfacturees)} color="text-status-print" />
             </div>
           </div>
         </div>

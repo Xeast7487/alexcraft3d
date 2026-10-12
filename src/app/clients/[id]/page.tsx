@@ -114,7 +114,7 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-white">Fournitures achetées pour ce client</h2>
             {fournituresnonfacturees > 0 && (
-              <span className="text-xs text-status-cours">{formatMontant(fournituresnonfacturees)} non facturé</span>
+              <span className="text-xs text-status-print">{formatMontant(fournituresnonfacturees)} à rembourser</span>
             )}
           </div>
           <div className="space-y-2">
@@ -127,7 +127,7 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium text-white">{formatMontant(f.montant)}</span>
                   <span className={`text-xs px-1.5 py-0.5 rounded-full border ${f.est_facture ? "text-status-livre bg-green-950/40 border-green-800/50" : "text-muted border-border"}`}>
-                    {f.est_facture ? "Facturé" : "Non facturé"}
+                    {f.est_facture ? "Remboursé" : "À rembourser"}
                   </span>
                 </div>
               </div>

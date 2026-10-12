@@ -75,7 +75,7 @@ export default function AddFournitureForm({ clients, commandes }: { clients: Cli
         </div>
         <div className="flex items-center gap-2 mt-6">
           <input type="checkbox" name="est_facture" value="true" id="est_facture_main" className="rounded" />
-          <label htmlFor="est_facture_main" className="text-sm text-muted">Déjà facturé</label>
+          <label htmlFor="est_facture_main" className="text-sm text-muted">Déjà remboursé</label>
         </div>
       </div>
       <div className="flex gap-2">

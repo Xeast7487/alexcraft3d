@@ -22,7 +22,7 @@ export default async function FournituresPage() {
     <div className="space-y-6 max-w-4xl">
       <div>
         <h1 className="text-2xl font-bold text-white">Fournitures</h1>
-        <p className="text-muted text-sm mt-1">Matériaux et outils commandés pour les clients</p>
+        <p className="text-muted text-sm mt-1">Achats sur carte — tracking des remboursements</p>
       </div>
 
       <div className="grid grid-cols-3 gap-3">
@@ -31,11 +31,11 @@ export default async function FournituresPage() {
           <p className="text-xl font-bold text-white mt-1">{formatMontant(total)}</p>
         </div>
         <div className="bg-surface border border-border rounded-xl p-4">
-          <p className="text-xs text-muted">Non facturé</p>
-          <p className="text-xl font-bold text-status-cours mt-1">{formatMontant(nonfacture)}</p>
+          <p className="text-xs text-muted">À rembourser</p>
+          <p className="text-xl font-bold text-status-print mt-1">{formatMontant(nonfacture)}</p>
         </div>
         <div className="bg-surface border border-border rounded-xl p-4">
-          <p className="text-xs text-muted">Facturé</p>
+          <p className="text-xs text-muted">Remboursé</p>
           <p className="text-xl font-bold text-status-livre mt-1">{formatMontant(total - nonfacture)}</p>
         </div>
       </div>

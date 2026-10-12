@@ -37,7 +37,7 @@ export default function FournitureRow({ fourniture: f }: { fourniture: Fournitur
               : "text-muted border-border hover:border-gray-500 hover:text-white"
           }`}
         >
-          {f.est_facture ? "Facturé ✓" : "Non facturé"}
+          {f.est_facture ? "Remboursé ✓" : "À rembourser"}
         </button>
         <button
           onClick={async () => {

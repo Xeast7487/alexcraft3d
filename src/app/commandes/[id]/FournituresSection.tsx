@@ -65,7 +65,7 @@ export default function FournituresSection({
             </div>
             <div className="flex items-center gap-2 mt-5">
               <input type="checkbox" name="est_facture" value="true" id="facture_comm" className="rounded" />
-              <label htmlFor="facture_comm" className="text-xs text-muted">Déjà facturé au client</label>
+              <label htmlFor="facture_comm" className="text-xs text-muted">Déjà remboursé</label>
             </div>
           </div>
           <div className="flex gap-2">
@@ -97,7 +97,7 @@ export default function FournituresSection({
                       : "text-muted border-border hover:border-gray-500"
                   }`}
                 >
-                  {f.est_facture ? "Facturé ✓" : "Non facturé"}
+                  {f.est_facture ? "Remboursé ✓" : "À rembourser"}
                 </button>
                 <button
                   onClick={async () => {
