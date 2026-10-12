@@ -13,7 +13,7 @@ export default async function CommandesPage({
 
   let commandesQuery = supabase
     .from("ac3d_commandes")
-    .select("*, ac3d_clients(id, nom)")
+    .select("*")
     .order("created_at", { ascending: false });
 
   if (statut && statut !== "tous") {
@@ -73,10 +73,11 @@ export default async function CommandesPage({
         ) : (
           (commandes || []).map((c) => {
             const commandeItems = (items || []).filter((i) => i.commande_id === c.id);
+            const commandeClient = (clients || []).find((cl) => cl.id === c.client_id) || null;
             return (
               <CommandeRow
                 key={c.id}
-                commande={{ ...c, ac3d_items: commandeItems }}
+                commande={{ ...c, ac3d_items: commandeItems, ac3d_clients: commandeClient }}
                 clients={clients || []}
               />
             );

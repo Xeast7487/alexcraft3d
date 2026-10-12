@@ -14,18 +14,16 @@ export default async function CommandeDetailPage({ params }: { params: { id: str
 
   const [{ data: commande }, { data: items }, { data: paiements }, { data: fournitures }, { data: clients }] =
     await Promise.all([
-      supabase
-        .from("ac3d_commandes")
-        .select("*, ac3d_clients(id, nom, email, telephone)")
-        .eq("id", id)
-        .single(),
+      supabase.from("ac3d_commandes").select("*").eq("id", id).single(),
       supabase.from("ac3d_items").select("*").eq("commande_id", id).order("id"),
       supabase.from("ac3d_paiements").select("*").eq("commande_id", id).order("created_at"),
       supabase.from("ac3d_fournitures").select("*").eq("commande_id", id).order("date_achat", { ascending: false }),
-      supabase.from("ac3d_clients").select("id, nom").order("nom"),
+      supabase.from("ac3d_clients").select("id, nom, email, telephone").order("nom"),
     ]);
 
   if (!commande) notFound();
+
+  const client = (clients || []).find((c) => c.id === commande.client_id) || null;
 
   const total = totalCommande(items || []);
   const restant = total - commande.montant_recu;
@@ -36,9 +34,9 @@ export default async function CommandeDetailPage({ params }: { params: { id: str
         <div>
           <Link href="/commandes" className="text-muted text-sm hover:text-white">← Commandes</Link>
           <h1 className="text-2xl font-bold text-white mt-1">{commande.titre}</h1>
-          {commande.ac3d_clients && (
-            <Link href={`/clients/${commande.ac3d_clients.id}`} className="text-sm text-accent hover:underline">
-              {commande.ac3d_clients.nom}
+          {client && (
+            <Link href={`/clients/${client.id}`} className="text-sm text-accent hover:underline">
+              {client.nom}
             </Link>
           )}
           <p className="text-xs text-muted mt-0.5">Créée le {formatDate(commande.created_at)}</p>

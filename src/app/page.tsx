@@ -7,11 +7,8 @@ export const dynamic = "force-dynamic";
 export default async function DashboardPage() {
   const [{ data: commandes }, { data: clients }, { data: items }, { data: fournitures }] =
     await Promise.all([
-      supabase
-        .from("ac3d_commandes")
-        .select("*, ac3d_clients(nom)")
-        .order("created_at", { ascending: false }),
-      supabase.from("ac3d_clients").select("id"),
+      supabase.from("ac3d_commandes").select("*").order("created_at", { ascending: false }),
+      supabase.from("ac3d_clients").select("id, nom"),
       supabase.from("ac3d_items").select("commande_id, prix"),
       supabase.from("ac3d_fournitures").select("montant, est_facture"),
     ]);
@@ -67,9 +64,7 @@ export default async function DashboardPage() {
                   >
                     <div>
                       <p className="text-sm font-medium text-white">{c.titre}</p>
-                      {c.ac3d_clients && (
-                        <p className="text-xs text-muted">{c.ac3d_clients.nom}</p>
-                      )}
+                      {(() => { const cl = (clients||[]).find(cl => cl.id === c.client_id); return cl ? <p className="text-xs text-muted">{cl.nom}</p> : null; })()}
                     </div>
                     <div className="flex items-center gap-2">
                       {itemsTotal > 0 && (

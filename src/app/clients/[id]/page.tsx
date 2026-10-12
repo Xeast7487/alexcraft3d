@@ -9,23 +9,20 @@ export const dynamic = "force-dynamic";
 export default async function ClientDetailPage({ params }: { params: { id: string } }) {
   const id = Number(params.id);
 
-  const [{ data: client }, { data: commandes }, { data: fournitures }] = await Promise.all([
+  const [{ data: client }, { data: commandes }, { data: items }, { data: fournitures }] = await Promise.all([
     supabase.from("ac3d_clients").select("*").eq("id", id).single(),
-    supabase
-      .from("ac3d_commandes")
-      .select("*, ac3d_items(prix)")
-      .eq("client_id", id)
-      .order("created_at", { ascending: false }),
+    supabase.from("ac3d_commandes").select("*").eq("client_id", id).order("created_at", { ascending: false }),
+    supabase.from("ac3d_items").select("commande_id, prix"),
     supabase.from("ac3d_fournitures").select("*").eq("client_id", id).order("date_achat", { ascending: false }),
   ]);
 
   if (!client) notFound();
 
   const totalCA = (commandes || []).reduce((sum, c) => {
-    const itemsTotal = (c.ac3d_items || []).reduce((s: number, i: { prix: number }) => s + i.prix, 0);
+    const itemsTotal = (items || []).filter((i) => i.commande_id === c.id).reduce((s, i) => s + Number(i.prix), 0);
     return sum + itemsTotal;
   }, 0);
-  const totalRecu = (commandes || []).reduce((sum, c) => sum + c.montant_recu, 0);
+  const totalRecu = (commandes || []).reduce((sum, c) => sum + Number(c.montant_recu ?? 0), 0);
   const solde = totalCA - totalRecu;
 
   const fournituresnonfacturees = (fournitures || [])
@@ -85,7 +82,7 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
         ) : (
           <div className="space-y-2">
             {(commandes || []).map((c) => {
-              const itemsTotal = (c.ac3d_items || []).reduce((s: number, i: { prix: number }) => s + i.prix, 0);
+              const itemsTotal = (items || []).filter((i) => i.commande_id === c.id).reduce((s, i) => s + Number(i.prix), 0);
               return (
                 <Link
                   key={c.id}
