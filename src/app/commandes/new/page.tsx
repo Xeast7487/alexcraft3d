@@ -2,6 +2,8 @@ import { supabase } from "@/lib/supabase";
 import { creerCommande } from "@/app/actions";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function NouvelleCommandePage() {
   const { data: clients } = await supabase
     .from("ac3d_clients")
