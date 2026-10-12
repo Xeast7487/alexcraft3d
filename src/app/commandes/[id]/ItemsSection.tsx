@@ -5,6 +5,60 @@ import { ajouterItem, modifierItem, supprimerItem, modifierStatutItem } from "@/
 import { Item } from "@/lib/supabase";
 import { formatMontant, formatTemps, statutColor, statutLabel, calculerPrix } from "@/lib/utils";
 
+const STATUTS = ["a_imprimer", "en_cours", "livre"] as const;
+type Statut = typeof STATUTS[number];
+
+function ItemRow({ item, commandeId, onEdit, onDelete }: {
+  item: Item;
+  commandeId: number;
+  onEdit: () => void;
+  onDelete: () => void;
+}) {
+  const [statut, setStatut] = useState<Statut>(item.statut as Statut);
+  const [toggling, setToggling] = useState(false);
+
+  async function cycleStatut() {
+    if (toggling) return;
+    setToggling(true);
+    const idx = STATUTS.indexOf(statut);
+    const next = STATUTS[(idx + 1) % STATUTS.length];
+    setStatut(next);
+    await modifierStatutItem(item.id, commandeId, next);
+    setToggling(false);
+  }
+
+  return (
+    <div className="flex items-center justify-between p-3 bg-bg rounded-lg border border-border/50">
+      <div className="flex-1">
+        <div className="flex items-center gap-2 flex-wrap">
+          <p className="text-sm font-medium text-white">{item.nom_piece}</p>
+          <button
+            onClick={cycleStatut}
+            disabled={toggling}
+            className={`text-xs px-1.5 py-0.5 rounded-full border transition-all hover:opacity-80 active:scale-95 ${statutColor(statut)} ${toggling ? "opacity-50" : ""}`}
+            title="Cliquer pour changer le statut"
+          >
+            {statutLabel(statut)}
+          </button>
+        </div>
+        <p className="text-xs text-muted mt-0.5">
+          {item.grammes > 0 && `${item.grammes}g`}
+          {item.grammes > 0 && (item.temps_heures > 0 || item.temps_minutes > 0) && " · "}
+          {formatTemps(item.temps_heures, item.temps_minutes)}
+          {item.taux_horaire !== 2 && ` @ ${item.taux_horaire}$/h`}
+        </p>
+      </div>
+      <div className="flex items-center gap-3">
+        <p className="text-sm font-semibold text-white">{formatMontant(item.prix)}</p>
+        <div className="flex gap-1">
+          <button onClick={onEdit} className="text-xs text-muted hover:text-white px-2 py-1 rounded hover:bg-border">✏️</button>
+          <button onClick={onDelete} className="text-xs text-red-400 hover:text-red-300 px-2 py-1 rounded hover:bg-border">×</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ItemsSection({ items, commandeId }: { items: Item[]; commandeId: number }) {
   const [ajoutOpen, setAjoutOpen] = useState(false);
   const [editItem, setEditItem] = useState<Item | null>(null);
@@ -32,55 +86,17 @@ export default function ItemsSection({ items, commandeId }: { items: Item[]; com
       ) : (
         <div className="space-y-2">
           {items.map((item) => (
-            <div key={item.id} className="flex items-center justify-between p-3 bg-bg rounded-lg border border-border/50">
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium text-white">{item.nom_piece}</p>
-                  <span className={`text-xs px-1.5 py-0.5 rounded-full border ${statutColor(item.statut)}`}>
-                    {statutLabel(item.statut)}
-                  </span>
-                </div>
-                <p className="text-xs text-muted mt-0.5">
-                  {item.grammes > 0 && `${item.grammes}g`}
-                  {item.grammes > 0 && (item.temps_heures > 0 || item.temps_minutes > 0) && " · "}
-                  {formatTemps(item.temps_heures, item.temps_minutes)}
-                  {item.taux_horaire !== 2 && ` @ ${item.taux_horaire}$/h`}
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <p className="text-sm font-semibold text-white">{formatMontant(item.prix)}</p>
-                <div className="flex gap-1">
-                  {item.statut !== "livre" && (
-                    <button
-                      onClick={async () => {
-                        const next = item.statut === "a_imprimer" ? "en_cours" : "livre";
-                        await modifierStatutItem(item.id, commandeId, next);
-                      }}
-                      className="text-xs text-muted hover:text-white px-2 py-1 rounded hover:bg-border"
-                      title="Avancer le statut"
-                    >
-                      →
-                    </button>
-                  )}
-                  <button
-                    onClick={() => setEditItem(item)}
-                    className="text-xs text-muted hover:text-white px-2 py-1 rounded hover:bg-border"
-                  >
-                    ✏️
-                  </button>
-                  <button
-                    onClick={async () => {
-                      if (confirm("Supprimer cette pièce ?")) {
-                        await supprimerItem(item.id, commandeId);
-                      }
-                    }}
-                    className="text-xs text-red-400 hover:text-red-300 px-2 py-1 rounded hover:bg-border"
-                  >
-                    ×
-                  </button>
-                </div>
-              </div>
-            </div>
+            <ItemRow
+              key={item.id}
+              item={item}
+              commandeId={commandeId}
+              onEdit={() => setEditItem(item)}
+              onDelete={async () => {
+                if (confirm("Supprimer cette pièce ?")) {
+                  await supprimerItem(item.id, commandeId);
+                }
+              }}
+            />
           ))}
         </div>
       )}
