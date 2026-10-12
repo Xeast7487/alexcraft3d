@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { supprimerCommande, modifierCommande } from "@/app/actions";
+import { supprimerCommande, modifierCommande, modifierStatutCommande } from "@/app/actions";
 import { formatMontant, statutColor, statutLabel, formatDate } from "@/lib/utils";
+
+const STATUTS = ["a_imprimer", "en_cours", "livre"] as const;
+type Statut = typeof STATUTS[number];
 
 type Client = { id: number; nom: string } | null;
 type CommandeRow = {
@@ -26,8 +29,21 @@ export default function CommandeRow({
   clients: { id: number; nom: string }[];
 }) {
   const [editOpen, setEditOpen] = useState(false);
+  const [statut, setStatut] = useState<Statut>(c.statut as Statut);
+  const [toggling, setToggling] = useState(false);
   const total = (c.ac3d_items || []).reduce((sum, i) => sum + i.prix, 0);
   const restant = total - c.montant_recu;
+
+  async function cycleStatut(e: React.MouseEvent) {
+    e.preventDefault();
+    if (toggling) return;
+    setToggling(true);
+    const idx = STATUTS.indexOf(statut);
+    const next = STATUTS[(idx + 1) % STATUTS.length];
+    setStatut(next);
+    await modifierStatutCommande(c.id, next);
+    setToggling(false);
+  }
 
   return (
     <>
@@ -51,9 +67,14 @@ export default function CommandeRow({
               <p className="text-xs text-status-print">−{formatMontant(restant)}</p>
             )}
           </div>
-          <span className={`text-xs px-2.5 py-1 rounded-full border ${statutColor(c.statut)}`}>
-            {statutLabel(c.statut)}
-          </span>
+          <button
+            onClick={cycleStatut}
+            disabled={toggling}
+            title="Cliquer pour changer le statut"
+            className={`text-xs px-2.5 py-1 rounded-full border transition-all hover:opacity-80 active:scale-95 ${statutColor(statut)} ${toggling ? "opacity-50" : ""}`}
+          >
+            {statutLabel(statut)}
+          </button>
           <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
               onClick={() => setEditOpen(true)}
