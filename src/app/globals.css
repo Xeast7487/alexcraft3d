@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --border: #2a2d3a;
+}
+
+body {
+  background-color: var(--bg);
+  color: #e5e7eb;
+}
+
+.safe-area-pb {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media print {
+  body { background: white; color: black; }
+  .no-print { display: none !important; }
+}
