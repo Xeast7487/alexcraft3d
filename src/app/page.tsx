@@ -5,22 +5,19 @@ import Link from "next/link";
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const [{ data: commandes }, { data: clients }, { data: fournitures }] =
+  const [{ data: commandes }, { data: clients }, { data: items }, { data: fournitures }] =
     await Promise.all([
       supabase
         .from("ac3d_commandes")
-        .select("*, ac3d_clients(nom), ac3d_items(prix)")
+        .select("*, ac3d_clients(nom)")
         .order("created_at", { ascending: false }),
       supabase.from("ac3d_clients").select("id"),
+      supabase.from("ac3d_items").select("commande_id, prix"),
       supabase.from("ac3d_fournitures").select("montant, est_facture"),
     ]);
 
-  // Compute totals directly from the joined items (same source as the list)
-  const totalPrix = (commandes || []).reduce((sum, c) => {
-    const itemsTotal = (c.ac3d_items || []).reduce((s: number, i: { prix: number }) => s + i.prix, 0);
-    return sum + itemsTotal;
-  }, 0);
-  const totalRecu = (commandes || []).reduce((sum, c) => sum + (c.montant_recu ?? 0), 0);
+  const totalPrix = (items || []).reduce((sum, i) => sum + Number(i.prix), 0);
+  const totalRecu = (commandes || []).reduce((sum, c) => sum + Number(c.montant_recu ?? 0), 0);
   const enAttente = totalPrix - totalRecu;
 
   const commandesActives = (commandes || []).filter((c) => c.statut !== "livre");
@@ -59,7 +56,9 @@ export default async function DashboardPage() {
           ) : (
             <div className="space-y-2">
               {recentCommandes.map((c) => {
-                const itemsTotal = (c.ac3d_items || []).reduce((s: number, i: { prix: number }) => s + i.prix, 0);
+                const itemsTotal = (items || [])
+                  .filter((i) => i.commande_id === c.id)
+                  .reduce((s, i) => s + Number(i.prix), 0);
                 return (
                   <Link
                     key={c.id}

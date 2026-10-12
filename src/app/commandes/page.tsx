@@ -11,18 +11,19 @@ export default async function CommandesPage({
 }) {
   const statut = searchParams.statut;
 
-  let query = supabase
+  let commandesQuery = supabase
     .from("ac3d_commandes")
-    .select("*, ac3d_clients(id, nom), ac3d_items(prix)")
+    .select("*, ac3d_clients(id, nom)")
     .order("created_at", { ascending: false });
 
   if (statut && statut !== "tous") {
-    query = query.eq("statut", statut);
+    commandesQuery = commandesQuery.eq("statut", statut);
   }
 
-  const [{ data: commandes }, { data: clients }] = await Promise.all([
-    query,
+  const [{ data: commandes }, { data: clients }, { data: items }] = await Promise.all([
+    commandesQuery,
     supabase.from("ac3d_clients").select("id, nom").order("nom"),
+    supabase.from("ac3d_items").select("commande_id, prix"),
   ]);
 
   return (
@@ -70,9 +71,16 @@ export default async function CommandesPage({
             </Link>
           </div>
         ) : (
-          (commandes || []).map((c) => (
-            <CommandeRow key={c.id} commande={c} clients={clients || []} />
-          ))
+          (commandes || []).map((c) => {
+            const commandeItems = (items || []).filter((i) => i.commande_id === c.id);
+            return (
+              <CommandeRow
+                key={c.id}
+                commande={{ ...c, ac3d_items: commandeItems }}
+                clients={clients || []}
+              />
+            );
+          })
         )}
       </div>
     </div>
