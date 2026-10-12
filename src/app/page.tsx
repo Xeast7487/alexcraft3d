@@ -4,13 +4,19 @@ import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
 export default async function DashboardPage() {
-  const [{ data: commandes }, { data: clients }, { data: items }, { data: fournitures }] =
+  const [{ data: commandes }, { data: clients }, { data: items }, fournitures] =
     await Promise.all([
       supabase.from("ac3d_commandes").select("*").order("created_at", { ascending: false }),
       supabase.from("ac3d_clients").select("id, nom"),
       supabase.from("ac3d_items").select("commande_id, prix"),
-      supabase.from("ac3d_fournitures").select("montant, est_facture"),
+      fetch(`${SUPABASE_URL}/rest/v1/ac3d_fournitures?select=montant,est_facture`, {
+        headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
+        cache: "no-store",
+      }).then((r) => r.json() as Promise<{ montant: number; est_facture: boolean }[]>),
     ]);
 
   const totalPrix = (items || []).reduce((sum, i) => sum + Number(i.prix), 0);
