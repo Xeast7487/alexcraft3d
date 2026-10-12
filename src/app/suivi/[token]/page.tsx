@@ -1,25 +1,39 @@
-import { supabase } from "@/lib/supabase";
 import { formatMontant, formatDate, totalCommande } from "@/lib/utils";
 import { notFound } from "next/navigation";
+import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+const SUPA_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const SUPA_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+async function supaFetch(path: string) {
+  const res = await fetch(`${SUPA_URL}/rest/v1/${path}`, {
+    headers: { apikey: SUPA_KEY, Authorization: `Bearer ${SUPA_KEY}` },
+    cache: "no-store",
+  });
+  return res.json();
+}
 
 export default async function SuiviPage({ params }: { params: { token: string } }) {
-  const { data: commande } = await supabase
-    .from("ac3d_commandes")
-    .select("*")
-    .eq("suivi_token", params.token)
-    .single();
+  headers(); // force truly dynamic — empêche le cache Vercel edge
 
+  const commandes: any[] = await supaFetch(
+    `ac3d_commandes?select=*&suivi_token=eq.${encodeURIComponent(params.token)}&limit=1`
+  );
+  const commande = commandes?.[0];
   if (!commande) notFound();
 
-  const [{ data: items }, { data: clients }] = await Promise.all([
-    supabase.from("ac3d_items").select("*").eq("commande_id", commande.id).order("id"),
-    supabase.from("ac3d_clients").select("id, nom").eq("id", commande.client_id),
+  const [items, clients]: [any[], any[]] = await Promise.all([
+    supaFetch(`ac3d_items?select=*&commande_id=eq.${commande.id}&order=id`),
+    commande.client_id
+      ? supaFetch(`ac3d_clients?select=id,nom&id=eq.${commande.client_id}&limit=1`)
+      : Promise.resolve([]),
   ]);
 
   const client = clients?.[0] || null;
-  const total = totalCommande(items || []);
+  const total = totalCommande((items || []).map((i: any) => ({ ...i, prix: Number(i.prix) })));
   const restant = Math.max(0, total - commande.montant_recu);
 
   const itemList = items || [];
