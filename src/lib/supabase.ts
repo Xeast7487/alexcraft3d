@@ -21,6 +21,7 @@ export type Commande = {
   statut: "a_imprimer" | "en_cours" | "livre";
   montant_recu: number;
   notes: string;
+  suivi_token: string | null;
   created_at: string;
   updated_at: string;
   ac3d_clients?: Client;

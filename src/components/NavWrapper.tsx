@@ -7,9 +7,9 @@ import MobileNav from "./MobileNav";
 
 export default function NavWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isLoginPage = pathname === "/login";
+  const isPublicPage = pathname === "/login" || pathname.startsWith("/suivi");
 
-  if (isLoginPage) {
+  if (isPublicPage) {
     return <main>{children}</main>;
   }
 

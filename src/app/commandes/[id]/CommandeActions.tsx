@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { modifierCommande, supprimerCommande, modifierStatutCommande } from "@/app/actions";
+import { modifierCommande, supprimerCommande, modifierStatutCommande, genererLienSuivi } from "@/app/actions";
 import { Commande } from "@/lib/supabase";
 
 type Client = { id: number; nom: string };
@@ -9,6 +9,17 @@ type Client = { id: number; nom: string };
 export default function CommandeActions({ commande, clients }: { commande: Commande; clients: Client[] }) {
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const [suiviCopied, setSuiviCopied] = useState(false);
+
+  async function partagerSuivi() {
+    let token = commande.suivi_token;
+    if (!token) token = await genererLienSuivi(commande.id);
+    const url = `${window.location.origin}/suivi/${token}`;
+    await navigator.clipboard.writeText(url);
+    setSuiviCopied(true);
+    setTimeout(() => setSuiviCopied(false), 2000);
+    setOpen(false);
+  }
 
   return (
     <div className="relative">
@@ -40,6 +51,12 @@ export default function CommandeActions({ commande, clients }: { commande: Comma
             </button>
           ))}
           <div className="border-t border-border mt-1 pt-1">
+            <button
+              onClick={partagerSuivi}
+              className="w-full text-left px-3 py-2 text-sm hover:bg-border transition-colors text-accent"
+            >
+              {suiviCopied ? "✓ Lien copié !" : "🔗 Lien de suivi client"}
+            </button>
             <button
               onClick={() => { setEditOpen(true); setOpen(false); }}
               className="w-full text-left px-3 py-2 text-sm hover:bg-border transition-colors"

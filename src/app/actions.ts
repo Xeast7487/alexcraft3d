@@ -208,3 +208,12 @@ export async function supprimerFourniture(id: number) {
   await supabase.from("ac3d_fournitures").delete().eq("id", id);
   revalidatePath("/fournitures");
 }
+
+// ── SUIVI CLIENT ──────────────────────────────────────────────────────────────
+
+export async function genererLienSuivi(commandeId: number): Promise<string> {
+  const token = crypto.randomUUID();
+  await supabase.from("ac3d_commandes").update({ suivi_token: token }).eq("id", commandeId);
+  revalidatePath(`/commandes/${commandeId}`);
+  return token;
+}
