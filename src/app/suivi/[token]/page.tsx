@@ -16,8 +16,65 @@ async function supaFetch(path: string) {
   return res.json();
 }
 
-export default async function SuiviPage({ params }: { params: { token: string } }) {
-  headers(); // force truly dynamic — empêche le cache Vercel edge
+const t = {
+  fr: {
+    tracking: "SUIVI DE COMMANDE",
+    order: "COMMANDE",
+    createdOn: "Créée le",
+    done: "Commande complétée",
+    printing: "En cours d'impression",
+    waiting: "En attente",
+    progress: "Progression",
+    pieces: (n: number) => `${n} PIÈCE${n > 1 ? "S" : ""}`,
+    statusLabel: { a_imprimer: "En attente", en_cours: "En cours", livre: "Livré" },
+    financial: "RÉSUMÉ FINANCIER",
+    total: "Total",
+    received: "Reçu",
+    balance: "Solde dû",
+    paid: "Payé ✓",
+    notes: "NOTES",
+    footer: "Des questions ? Écris-nous à",
+  },
+  en: {
+    tracking: "ORDER TRACKING",
+    order: "ORDER",
+    createdOn: "Created on",
+    done: "Order completed",
+    printing: "Currently printing",
+    waiting: "Waiting to print",
+    progress: "Progress",
+    pieces: (n: number) => `${n} ITEM${n > 1 ? "S" : ""}`,
+    statusLabel: { a_imprimer: "Pending", en_cours: "Printing", livre: "Delivered" },
+    financial: "FINANCIAL SUMMARY",
+    total: "Total",
+    received: "Received",
+    balance: "Balance due",
+    paid: "Paid ✓",
+    notes: "NOTES",
+    footer: "Questions? Email us at",
+  },
+} as const;
+
+type Lang = keyof typeof t;
+
+export default async function SuiviPage({
+  params,
+  searchParams,
+}: {
+  params: { token: string };
+  searchParams: { lang?: string };
+}) {
+  const hdrs = headers();
+
+  // Determine language: URL param > Accept-Language header > default FR
+  let lang: Lang = "fr";
+  if (searchParams.lang === "en" || searchParams.lang === "fr") {
+    lang = searchParams.lang;
+  } else {
+    const acceptLang = hdrs.get("accept-language") || "";
+    if (acceptLang.toLowerCase().startsWith("en")) lang = "en";
+  }
+  const tx = t[lang];
 
   const commandes: any[] = await supaFetch(
     `ac3d_commandes?select=*&suivi_token=eq.${encodeURIComponent(params.token)}&limit=1`
@@ -45,7 +102,9 @@ export default async function SuiviPage({ params }: { params: { token: string } 
   const isPrinting = enCoursCount > 0;
 
   const globalStatut = allDone ? "livre" : isPrinting ? "en_cours" : "a_imprimer";
-  const globalLabel = allDone ? "Commande complétée" : isPrinting ? "En cours d'impression" : "En attente";
+  const globalLabel = allDone ? tx.done : isPrinting ? tx.printing : tx.waiting;
+  const otherLang = lang === "fr" ? "en" : "fr";
+  const otherLangLabel = lang === "fr" ? "EN" : "FR";
 
   return (
     <>
@@ -144,10 +203,23 @@ export default async function SuiviPage({ params }: { params: { token: string } 
                   <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-blue-500 border-2 border-gray-900 blink" />
                 )}
               </div>
-              <div>
+              <div className="flex-1">
                 <p className="font-black text-xl tracking-wide" style={{ letterSpacing: "0.1em" }}>ALEXCRAFT3D</p>
-                <p style={{ color: "rgba(99,102,241,0.8)", fontSize: "11px", letterSpacing: "0.2em" }}>SUIVI DE COMMANDE</p>
+                <p style={{ color: "rgba(99,102,241,0.8)", fontSize: "11px", letterSpacing: "0.2em" }}>{tx.tracking}</p>
               </div>
+              {/* Lang toggle */}
+              <a
+                href={`?lang=${otherLang}`}
+                className="flex-shrink-0 text-xs font-bold px-3 py-1.5 rounded-full transition-all"
+                style={{
+                  background: "rgba(99,102,241,0.15)",
+                  border: "1px solid rgba(99,102,241,0.4)",
+                  color: "#a5b4fc",
+                  letterSpacing: "0.1em",
+                }}
+              >
+                {otherLangLabel}
+              </a>
             </div>
           </div>
         </div>
@@ -178,7 +250,7 @@ export default async function SuiviPage({ params }: { params: { token: string } 
 
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <p style={{ fontSize: "10px", letterSpacing: "0.2em", color: "rgba(255,255,255,0.4)" }}>COMMANDE</p>
+                  <p style={{ fontSize: "10px", letterSpacing: "0.2em", color: "rgba(255,255,255,0.4)" }}>{tx.order}</p>
                   <h1 className="text-xl font-bold mt-0.5">{commande.titre}</h1>
                   {client && <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "13px" }}>{client.nom}</p>}
                   <p style={{ color: "rgba(255,255,255,0.3)", fontSize: "11px", marginTop: "2px" }}>
@@ -209,8 +281,8 @@ export default async function SuiviPage({ params }: { params: { token: string } 
               {totalItems > 0 && (
                 <div>
                   <div className="flex justify-between text-xs mb-2" style={{ color: "rgba(255,255,255,0.4)" }}>
-                    <span>Progression</span>
-                    <span style={{ color: "#a5b4fc", fontFamily: "monospace" }}>{livreCount}/{totalItems} pièces</span>
+                    <span>{tx.progress}</span>
+                    <span style={{ color: "#a5b4fc", fontFamily: "monospace" }}>{livreCount}/{totalItems}</span>
                   </div>
                   <div className="h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.08)" }}>
                     <div
@@ -244,7 +316,7 @@ export default async function SuiviPage({ params }: { params: { token: string } 
               }}>
                 <div className="px-5 py-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
                   <p style={{ fontSize: "10px", letterSpacing: "0.2em", color: "rgba(255,255,255,0.4)" }}>
-                    PIÈCES IMPRIMÉES — {totalItems} ARTICLE{totalItems > 1 ? "S" : ""}
+                    {tx.pieces(totalItems)}
                   </p>
                 </div>
                 <div className="p-3 space-y-2">
@@ -304,7 +376,7 @@ export default async function SuiviPage({ params }: { params: { token: string } 
                               ? "1px solid rgba(59,130,246,0.3)"
                               : "1px solid rgba(99,102,241,0.2)",
                           }}>
-                            {isLivre ? "Livré" : isEnCours ? "En cours" : "En attente"}
+                            {tx.statusLabel[item.statut as keyof typeof tx.statusLabel] ?? item.statut}
                           </span>
                         </div>
                       </div>
@@ -323,29 +395,29 @@ export default async function SuiviPage({ params }: { params: { token: string } 
               backdropFilter: "blur(10px)",
             }}>
               <p style={{ fontSize: "10px", letterSpacing: "0.2em", color: "rgba(255,255,255,0.4)", marginBottom: "12px" }}>
-                RÉSUMÉ FINANCIER
+                {tx.financial}
               </p>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>Total</span>
+                  <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>{tx.total}</span>
                   <span className="font-bold" style={{ fontFamily: "monospace", fontSize: "16px" }}>{formatMontant(total)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>Reçu</span>
+                  <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>{tx.received}</span>
                   <span className="font-bold" style={{ fontFamily: "monospace", fontSize: "16px", color: "#4ade80" }}>
                     {formatMontant(commande.montant_recu)}
                   </span>
                 </div>
                 <div className="h-px" style={{ background: "rgba(255,255,255,0.06)" }} />
                 <div className="flex justify-between items-center">
-                  <span style={{ fontSize: "14px", fontWeight: 600 }}>Solde dû</span>
+                  <span style={{ fontSize: "14px", fontWeight: 600 }}>{tx.balance}</span>
                   {restant > 0 ? (
                     <span className="font-black text-lg" style={{ fontFamily: "monospace", color: "#f97316" }}>
                       {formatMontant(restant)}
                     </span>
                   ) : (
                     <span className="font-black text-lg" style={{ fontFamily: "monospace", color: "#4ade80" }}>
-                      Payé ✓
+                      {tx.paid}
                     </span>
                   )}
                 </div>
@@ -360,7 +432,7 @@ export default async function SuiviPage({ params }: { params: { token: string } 
                 border: "1px solid rgba(99,102,241,0.15)",
                 backdropFilter: "blur(10px)",
               }}>
-                <p style={{ fontSize: "10px", letterSpacing: "0.2em", color: "rgba(255,255,255,0.4)", marginBottom: "8px" }}>NOTES</p>
+                <p style={{ fontSize: "10px", letterSpacing: "0.2em", color: "rgba(255,255,255,0.4)", marginBottom: "8px" }}>{tx.notes}</p>
                 <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "14px", lineHeight: 1.6 }}>{commande.notes}</p>
               </div>
             </div>
@@ -372,7 +444,7 @@ export default async function SuiviPage({ params }: { params: { token: string } 
             letterSpacing: "0.1em",
             animationDelay: "350ms",
           }}>
-            nstudio259@gmail.com
+            {tx.footer} nstudio259@gmail.com
           </p>
         </div>
       </div>
