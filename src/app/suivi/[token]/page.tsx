@@ -273,7 +273,7 @@ export default async function SuiviPage({
                     : "1px solid rgba(99,102,241,0.5)",
                   color: globalStatut === "livre" ? "#4ade80" : globalStatut === "en_cours" ? "#60a5fa" : "#a5b4fc",
                 }}>
-                  <span>{globalStatut === "livre" ? "✅" : globalStatut === "en_cours" ? "🖨️" : "⏳"}</span>
+                  {globalStatut === "livre" ? <span>✅</span> : globalStatut === "en_cours" ? <Printer3DIcon size={13} color={globalStatut === "en_cours" ? "#60a5fa" : "#a5b4fc"} /> : <span>⏳</span>}
                   <span>{globalLabel}</span>
                 </div>
               </div>
