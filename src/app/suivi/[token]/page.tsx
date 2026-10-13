@@ -1,4 +1,5 @@
 import { formatMontant, formatDate, totalCommande } from "@/lib/utils";
+import Printer3DIcon from "@/components/Printer3DIcon";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 
@@ -195,9 +196,9 @@ export default async function SuiviPage({
           <div className="relative max-w-lg mx-auto px-5 py-8">
             <div className="flex items-center gap-4">
               <div className="relative">
-                <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl glow-purple"
+                <div className="w-14 h-14 rounded-2xl flex items-center justify-center glow-purple"
                   style={{ background: "linear-gradient(135deg, #6366f1, #4f46e5)", border: "1px solid rgba(99,102,241,0.5)" }}>
-                  🖨️
+                  <Printer3DIcon size={32} color="white" />
                 </div>
                 {isPrinting && (
                   <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-blue-500 border-2 border-gray-900 blink" />
@@ -359,7 +360,7 @@ export default async function SuiviPage({
                                   ? "rgba(59,130,246,0.15)"
                                   : "rgba(255,255,255,0.05)",
                               }}>
-                              {isLivre ? "✅" : isEnCours ? <span className="nozzle">🖨️</span> : "⏳"}
+                              {isLivre ? "✅" : isEnCours ? <span className="nozzle inline-flex"><Printer3DIcon size={16} color="#60a5fa" /></span> : "⏳"}
                             </div>
                             <span className="text-sm font-medium">{item.nom_piece}</span>
                           </div>

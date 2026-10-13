@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import LogoutButton from "./LogoutButton";
 import MobileNav from "./MobileNav";
+import Printer3DIcon from "./Printer3DIcon";
 
 export default function NavWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -19,7 +20,7 @@ export default function NavWrapper({ children }: { children: React.ReactNode }) 
       <nav className="hidden md:flex w-56 bg-surface border-r border-border flex-col flex-shrink-0">
         <div className="p-5 border-b border-border">
           <div className="flex items-center gap-2">
-            <span className="text-2xl">🖨️</span>
+            <Printer3DIcon size={28} color="#6366f1" />
             <div>
               <p className="font-bold text-white text-sm">AlexCraft3D</p>
               <p className="text-xs text-muted">Gestion commandes</p>
@@ -40,7 +41,7 @@ export default function NavWrapper({ children }: { children: React.ReactNode }) 
       {/* Mobile header */}
       <div className="md:hidden fixed top-0 inset-x-0 z-40 bg-surface border-b border-border px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-xl">🖨️</span>
+          <Printer3DIcon size={22} color="#6366f1" />
           <span className="font-bold text-white text-sm">AlexCraft3D</span>
         </div>
         <LogoutButton compact />
