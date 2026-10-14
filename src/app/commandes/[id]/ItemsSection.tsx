@@ -5,7 +5,7 @@ import { ajouterItem, modifierItem, supprimerItem, modifierStatutItem } from "@/
 import { Item } from "@/lib/supabase";
 import { formatMontant, formatTemps, statutColor, statutLabel, calculerPrix } from "@/lib/utils";
 
-const STATUTS = ["a_imprimer", "en_cours", "livre"] as const;
+const STATUTS = ["a_imprimer", "en_cours", "complete", "livre"] as const;
 type Statut = typeof STATUTS[number];
 
 function ItemRow({ item, commandeId, onEdit, onDelete }: {

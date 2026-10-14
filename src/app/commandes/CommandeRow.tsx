@@ -5,7 +5,7 @@ import Link from "next/link";
 import { supprimerCommande, modifierCommande, modifierStatutCommande } from "@/app/actions";
 import { formatMontant, statutColor, statutLabel, formatDate } from "@/lib/utils";
 
-const STATUTS = ["a_imprimer", "en_cours", "livre"] as const;
+const STATUTS = ["a_imprimer", "en_cours", "complete", "livre"] as const;
 type Statut = typeof STATUTS[number];
 
 type Client = { id: number; nom: string } | null;

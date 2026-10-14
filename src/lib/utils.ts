@@ -28,6 +28,7 @@ export function statutLabel(statut: string): string {
   switch (statut) {
     case "a_imprimer": return "À imprimer";
     case "en_cours": return "En cours";
+    case "complete": return "Complété";
     case "livre": return "Livré";
     default: return statut;
   }
@@ -37,6 +38,7 @@ export function statutColor(statut: string): string {
   switch (statut) {
     case "a_imprimer": return "text-status-print bg-orange-950/40 border-orange-800/50";
     case "en_cours": return "text-status-cours bg-blue-950/40 border-blue-800/50";
+    case "complete": return "text-purple-300 bg-purple-950/40 border-purple-800/50";
     case "livre": return "text-status-livre bg-green-950/40 border-green-800/50";
     default: return "text-muted";
   }

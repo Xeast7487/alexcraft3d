@@ -18,7 +18,7 @@ export type Commande = {
   id: number;
   client_id: number | null;
   titre: string;
-  statut: "a_imprimer" | "en_cours" | "livre";
+  statut: "a_imprimer" | "en_cours" | "complete" | "livre";
   montant_recu: number;
   notes: string;
   suivi_token: string | null;
@@ -37,7 +37,7 @@ export type Item = {
   taux_horaire: number;
   prix: number;
   prix_original: number | null;
-  statut: "a_imprimer" | "en_cours" | "livre";
+  statut: "a_imprimer" | "en_cours" | "complete" | "livre";
   notes: string;
 };
 

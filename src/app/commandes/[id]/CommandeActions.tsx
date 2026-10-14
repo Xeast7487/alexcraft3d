@@ -36,6 +36,7 @@ export default function CommandeActions({ commande, clients }: { commande: Comma
           {[
             { v: "a_imprimer", l: "À imprimer" },
             { v: "en_cours", l: "En cours" },
+            { v: "complete", l: "Complété" },
             { v: "livre", l: "Livré" },
           ].map((s) => (
             <button
