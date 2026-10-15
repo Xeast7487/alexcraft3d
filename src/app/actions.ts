@@ -5,8 +5,6 @@ import { supabase } from "@/lib/supabase";
 import { redirect } from "next/navigation";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const STATUT_LABEL: Record<string, string> = {
   a_imprimer: "À imprimer",
   en_cours: "En cours d'impression",
@@ -30,6 +28,7 @@ async function envoyerEmailStatut({
   itemNom?: string;
 }) {
   if (!process.env.RESEND_API_KEY) return;
+  const resend = new Resend(process.env.RESEND_API_KEY);
   const label = STATUT_LABEL[nouveauStatut] ?? nouveauStatut;
   const suiviUrl = suiviToken
     ? `${process.env.NEXT_PUBLIC_APP_URL ?? "https://alexcraft3d.vercel.app"}/suivi/${suiviToken}`
