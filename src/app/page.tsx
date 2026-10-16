@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import ChatWidget from "@/components/ChatWidget";
 
 export const metadata = {
   title: "2F3D — Les Deux Frères de l'Impression 3D",
@@ -139,6 +140,8 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+
+      <ChatWidget />
 
     </div>
   );
