@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
           { name: "📬 Contact", value: contact, inline: true },
           { name: "💬 Message", value: message, inline: false },
         ],
-        footer: { text: "2f3d.alexcraft3d.vercel.app" },
+        footer: { text: "2f3d.ca · info@2f3d.ca" },
         timestamp: new Date().toISOString(),
       },
     ],

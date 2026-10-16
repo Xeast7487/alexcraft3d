@@ -205,7 +205,7 @@ export default async function SuiviPage({
                 )}
               </div>
               <div className="flex-1">
-                <p className="font-black text-xl tracking-wide" style={{ letterSpacing: "0.1em" }}>ALEXCRAFT3D</p>
+                <p className="font-black text-xl tracking-wide" style={{ letterSpacing: "0.1em" }}>2F3D</p>
                 <p style={{ color: "rgba(99,102,241,0.8)", fontSize: "11px", letterSpacing: "0.2em" }}>{tx.tracking}</p>
               </div>
               {/* Lang toggle */}

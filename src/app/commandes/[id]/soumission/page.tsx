@@ -36,7 +36,7 @@ export default async function SoumissionPage({ params }: { params: { id: string 
       <div className="max-w-2xl mx-auto p-12">
         <div className="flex justify-between items-start mb-10">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">🖨️ AlexCraft3D</h1>
+            <h1 className="text-3xl font-bold text-gray-900">🖨️ 2F3D</h1>
             <p className="text-gray-500 text-sm mt-1">Impression 3D sur mesure</p>
           </div>
           <div className="text-right">
@@ -49,8 +49,8 @@ export default async function SoumissionPage({ params }: { params: { id: string 
         <div className="grid grid-cols-2 gap-8 mb-10">
           <div>
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">De</p>
-            <p className="font-semibold">AlexCraft3D</p>
-            <p className="text-gray-600 text-sm">nstudio259@gmail.com</p>
+            <p className="font-semibold">2F3D</p>
+            <p className="text-gray-600 text-sm">info@2f3d.ca</p>
           </div>
           {client && (
             <div>
@@ -123,7 +123,7 @@ export default async function SoumissionPage({ params }: { params: { id: string 
 
         <div className="mt-16 pt-8 border-t border-gray-200 text-center text-sm text-gray-400">
           <p>Merci pour votre confiance ! 🖨️</p>
-          <p className="mt-1">nstudio259@gmail.com</p>
+          <p className="mt-1">info@2f3d.ca</p>
         </div>
       </div>
     </div>

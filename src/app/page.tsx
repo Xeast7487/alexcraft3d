@@ -137,14 +137,23 @@ export default function HomePage() {
           <p className="text-lg text-[#6e6e73] mb-10 max-w-sm mx-auto leading-relaxed">
             Suis-nous sur Facebook pour nos créations, conseils et lives d&apos;impression.
           </p>
-          <a
-            href="https://www.facebook.com/share/1DTXK3AwBV/?mibextid=wwXIfr"
-            target="_blank" rel="noopener noreferrer"
-            className="inline-flex items-center gap-2.5 bg-[#f26217] text-white font-semibold px-8 py-3.5 rounded-full text-base hover:bg-[#d45510] transition-colors"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-            Page Facebook 2F3D
-          </a>
+          <div className="flex flex-col sm:flex-row items-center gap-3">
+            <a
+              href="https://www.facebook.com/share/1DTXK3AwBV/?mibextid=wwXIfr"
+              target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2.5 bg-[#f26217] text-white font-semibold px-8 py-3.5 rounded-full text-base hover:bg-[#d45510] transition-colors"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+              Page Facebook 2F3D
+            </a>
+            <a
+              href="mailto:info@2f3d.ca"
+              className="inline-flex items-center gap-2 text-[#1d1d1f] font-semibold px-8 py-3.5 rounded-full text-base border border-[rgba(0,0,0,0.15)] hover:border-[rgba(0,0,0,0.3)] transition-colors"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              info@2f3d.ca
+            </a>
+          </div>
         </div>
       </section>
 
@@ -159,6 +168,7 @@ export default function HomePage() {
             <span className="text-xs text-[#c7c7cc]">Les Deux Frères de l&apos;Impression 3D</span>
           </div>
           <div className="flex items-center gap-6">
+            <a href="mailto:info@2f3d.ca" className="text-sm text-[#6e6e73] hover:text-[#1d1d1f] transition-colors">info@2f3d.ca</a>
             <a href="https://www.facebook.com/share/1DTXK3AwBV/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer"
               className="text-sm text-[#6e6e73] hover:text-[#1d1d1f] transition-colors">Facebook</a>
             <Link href="/commandes" className="text-xs text-[#c7c7cc] hover:text-[#6e6e73] transition-colors">Admin</Link>
