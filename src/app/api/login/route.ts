@@ -1,14 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
-  const { password } = await req.json();
+const USERS: Record<string, string | undefined> = {
+  alex:    process.env.ALEX_PASSWORD,
+  vincent: process.env.VINCENT_PASSWORD,
+};
 
-  if (!process.env.ADMIN_PASSWORD || password !== process.env.ADMIN_PASSWORD) {
+export async function POST(req: NextRequest) {
+  const { username, password } = await req.json();
+
+  const expected = USERS[username?.toLowerCase()];
+  if (!expected || password !== expected) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const response = NextResponse.json({ ok: true });
-  response.cookies.set("ac3d_auth", process.env.ADMIN_PASSWORD, {
+  response.cookies.set("ac3d_auth", username.toLowerCase(), {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",

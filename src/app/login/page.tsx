@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,14 +18,14 @@ export default function LoginPage() {
     const res = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({ username, password }),
     });
 
     if (res.ok) {
-      router.push("/");
+      router.push("/commandes");
       router.refresh();
     } else {
-      setError("Mot de passe incorrect.");
+      setError("Identifiants incorrects.");
       setLoading(false);
     }
   }
@@ -39,6 +40,18 @@ export default function LoginPage() {
         </div>
         <form onSubmit={handleSubmit} className="bg-surface border border-border rounded-xl p-6 space-y-4">
           <div>
+            <label className="block text-sm text-muted mb-1">Utilisateur</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-accent"
+              placeholder="alex ou vincent"
+              autoFocus
+              autoComplete="username"
+            />
+          </div>
+          <div>
             <label className="block text-sm text-muted mb-1">Mot de passe</label>
             <input
               type="password"
@@ -46,7 +59,7 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-accent"
               placeholder="••••••••"
-              autoFocus
+              autoComplete="current-password"
             />
           </div>
           {error && <p className="text-red-400 text-sm">{error}</p>}

@@ -4,12 +4,12 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (pathname.startsWith("/login") || pathname.startsWith("/suivi") || pathname.startsWith("/_next") || pathname.startsWith("/api")) {
+  if (pathname === "/" || pathname.startsWith("/login") || pathname.startsWith("/suivi") || pathname.startsWith("/_next") || pathname.startsWith("/api")) {
     return NextResponse.next();
   }
 
   const auth = request.cookies.get("ac3d_auth")?.value;
-  if (!auth || auth !== process.env.ADMIN_PASSWORD) {
+  if (auth !== "alex" && auth !== "vincent") {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
