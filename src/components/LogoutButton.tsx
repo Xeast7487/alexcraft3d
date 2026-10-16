@@ -15,10 +15,12 @@ export default function LogoutButton({ compact }: { compact?: boolean }) {
     return (
       <button
         onClick={handleLogout}
-        className="text-muted hover:text-white p-1.5 rounded-lg hover:bg-border transition-colors text-sm"
         title="Déconnexion"
+        className="text-muted hover:text-white transition-colors p-1.5 rounded-lg hover:bg-border"
       >
-        🚪
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
       </button>
     );
   }
@@ -26,9 +28,12 @@ export default function LogoutButton({ compact }: { compact?: boolean }) {
   return (
     <button
       onClick={handleLogout}
-      className="w-full text-left px-3 py-2 text-sm text-muted hover:text-white hover:bg-border rounded-lg transition-colors"
+      className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted hover:text-white hover:bg-border rounded-lg transition-colors"
     >
-      🚪 Déconnexion
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
+      Déconnexion
     </button>
   );
 }

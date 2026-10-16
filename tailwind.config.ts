@@ -9,12 +9,12 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: "#0f1117",
-        surface: "#1a1d27",
-        border: "#2a2d3a",
-        muted: "#6b7280",
-        accent: "#6366f1",
-        "accent-hover": "#5254cc",
+        bg:             "#0c0c0c",
+        surface:        "#131313",
+        border:         "#1e1e1e",
+        muted:          "#555555",
+        accent:         "#f26217",
+        "accent-hover": "#d45510",
         "status-print": "#f97316",
         "status-cours": "#3b82f6",
         "status-livre": "#22c55e",

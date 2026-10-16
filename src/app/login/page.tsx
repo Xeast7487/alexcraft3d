@@ -31,46 +31,59 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-bg flex items-center justify-center">
+    <div className="min-h-screen bg-bg flex items-center justify-center px-4"
+      style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" }}>
       <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <span className="text-5xl">🖨️</span>
-          <h1 className="text-2xl font-bold text-white mt-3">AlexCraft3D</h1>
-          <p className="text-muted text-sm mt-1">Gestion des commandes</p>
+
+        {/* Logo */}
+        <div className="text-center mb-10">
+          <span className="font-black text-3xl tracking-tight">
+            <span className="text-white">2F</span><span className="text-accent">3D</span>
+          </span>
+          <p className="text-muted text-xs mt-2 uppercase tracking-widest font-semibold">Espace admin</p>
         </div>
-        <form onSubmit={handleSubmit} className="bg-surface border border-border rounded-xl p-6 space-y-4">
-          <div>
-            <label className="block text-sm text-muted mb-1">Utilisateur</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-accent"
-              placeholder="alex ou vincent"
-              autoFocus
-              autoComplete="username"
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-muted mb-1">Mot de passe</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-accent"
-              placeholder="••••••••"
-              autoComplete="current-password"
-            />
-          </div>
-          {error && <p className="text-red-400 text-sm">{error}</p>}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-accent hover:bg-accent-hover text-white font-medium py-2 rounded-lg text-sm transition-colors disabled:opacity-50"
-          >
-            {loading ? "Connexion..." : "Se connecter"}
-          </button>
-        </form>
+
+        {/* Form */}
+        <div className="bg-surface border border-border rounded-2xl p-6 space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <div>
+              <label className="block text-xs text-muted mb-1.5 font-medium uppercase tracking-wider">Utilisateur</label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full bg-bg border border-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-accent transition-colors placeholder-[#333]"
+                placeholder="alex ou vincent"
+                autoFocus
+                autoComplete="username"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-muted mb-1.5 font-medium uppercase tracking-wider">Mot de passe</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-bg border border-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-accent transition-colors placeholder-[#333]"
+                placeholder="••••••••"
+                autoComplete="current-password"
+              />
+            </div>
+
+            {error && (
+              <p className="text-red-400 text-xs pt-1">{error}</p>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-accent hover:bg-accent-hover text-white font-semibold py-2.5 rounded-xl text-sm transition-colors disabled:opacity-40 mt-1"
+            >
+              {loading ? "Connexion..." : "Se connecter"}
+            </button>
+          </form>
+        </div>
+
       </div>
     </div>
   );
