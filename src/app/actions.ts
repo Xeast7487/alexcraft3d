@@ -3,7 +3,13 @@
 import { revalidatePath } from "next/cache";
 import { supabase } from "@/lib/supabase";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { Resend } from "resend";
+
+async function getUser(): Promise<string> {
+  const store = await cookies();
+  return store.get("ac3d_auth")?.value ?? "alex";
+}
 
 const STATUT_LABEL: Record<string, string> = {
   a_imprimer: "À imprimer",
@@ -63,6 +69,7 @@ async function envoyerEmailStatut({
 // ── CLIENTS ──────────────────────────────────────────────────────────────────
 
 export async function creerClient(formData: FormData) {
+  const utilisateur = await getUser();
   const nom = formData.get("nom") as string;
   const email = (formData.get("email") as string) || "";
   const telephone = (formData.get("telephone") as string) || "";
@@ -70,7 +77,7 @@ export async function creerClient(formData: FormData) {
 
   const { data, error } = await supabase
     .from("ac3d_clients")
-    .insert({ nom, email, telephone, notes })
+    .insert({ nom, email, telephone, notes, utilisateur })
     .select()
     .single();
 
@@ -99,13 +106,14 @@ export async function supprimerClient(id: number) {
 // ── COMMANDES ────────────────────────────────────────────────────────────────
 
 export async function creerCommande(formData: FormData) {
+  const utilisateur = await getUser();
   const titre = formData.get("titre") as string;
   const client_id = formData.get("client_id") ? Number(formData.get("client_id")) : null;
   const notes = (formData.get("notes") as string) || "";
 
   const { data, error } = await supabase
     .from("ac3d_commandes")
-    .insert({ titre, client_id, notes })
+    .insert({ titre, client_id, notes, utilisateur })
     .select()
     .single();
 
@@ -285,6 +293,7 @@ export async function supprimerPaiement(id: number, commande_id: number) {
 // ── FOURNITURES ──────────────────────────────────────────────────────────────
 
 export async function ajouterFourniture(formData: FormData) {
+  const utilisateur = await getUser();
   const description = formData.get("description") as string;
   const fournisseur = (formData.get("fournisseur") as string) || "";
   const montant = Number(formData.get("montant")) || 0;
@@ -303,6 +312,7 @@ export async function ajouterFourniture(formData: FormData) {
     est_facture,
     date_achat,
     notes,
+    utilisateur,
   });
 
   revalidatePath("/fournitures");

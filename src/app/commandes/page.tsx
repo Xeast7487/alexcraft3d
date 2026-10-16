@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { getCurrentUser } from "@/lib/auth";
 import Link from "next/link";
 import CommandeRow from "./CommandeRow";
 
@@ -10,10 +11,12 @@ export default async function CommandesPage({
   searchParams: { statut?: string };
 }) {
   const statut = searchParams.statut;
+  const user = await getCurrentUser();
 
   let commandesQuery = supabase
     .from("ac3d_commandes")
     .select("*")
+    .eq("utilisateur", user)
     .order("created_at", { ascending: false });
 
   if (statut && statut !== "tous") {
@@ -22,7 +25,7 @@ export default async function CommandesPage({
 
   const [{ data: commandes }, { data: clients }, { data: items }] = await Promise.all([
     commandesQuery,
-    supabase.from("ac3d_clients").select("id, nom").order("nom"),
+    supabase.from("ac3d_clients").select("id, nom").eq("utilisateur", user).order("nom"),
     supabase.from("ac3d_items").select("commande_id, prix"),
   ]);
 

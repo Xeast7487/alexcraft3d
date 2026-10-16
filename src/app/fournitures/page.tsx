@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { getCurrentUser } from "@/lib/auth";
 import { formatMontant } from "@/lib/utils";
 import AddFournitureForm from "./AddFournitureForm";
 import FournitureRow from "./FournitureRow";
@@ -6,13 +7,15 @@ import FournitureRow from "./FournitureRow";
 export const dynamic = "force-dynamic";
 
 export default async function FournituresPage() {
+  const user = await getCurrentUser();
   const [{ data: fournitures }, { data: clients }, { data: commandes }] = await Promise.all([
     supabase
       .from("ac3d_fournitures")
       .select("*, ac3d_clients(nom), ac3d_commandes(titre)")
+      .eq("utilisateur", user)
       .order("date_achat", { ascending: false }),
-    supabase.from("ac3d_clients").select("id, nom").order("nom"),
-    supabase.from("ac3d_commandes").select("id, titre").order("titre"),
+    supabase.from("ac3d_clients").select("id, nom").eq("utilisateur", user).order("nom"),
+    supabase.from("ac3d_commandes").select("id, titre").eq("utilisateur", user).order("titre"),
   ]);
 
   const total = (fournitures || []).reduce((sum, f) => sum + f.montant, 0);

@@ -1,13 +1,16 @@
 import { supabase } from "@/lib/supabase";
+import { getCurrentUser } from "@/lib/auth";
 import Link from "next/link";
 import ClientRow from "./ClientRow";
 
 export const dynamic = "force-dynamic";
 
 export default async function ClientsPage() {
+  const user = await getCurrentUser();
   const { data: clients } = await supabase
     .from("ac3d_clients")
     .select("*, ac3d_commandes(id, statut)")
+    .eq("utilisateur", user)
     .order("nom");
 
   return (
