@@ -9,8 +9,23 @@ import NavWrapper from "@/components/NavWrapper";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "AlexCraft3D",
-  description: "Gestion des commandes d'impression 3D",
+  title: "2F3D — Les Deux Frères de l'Impression 3D",
+  description: "Alex et Vincent partagent leur passion pour l'impression 3D avec la Bambu Lab.",
+  openGraph: {
+    title: "2F3D — Les Deux Frères de l'Impression 3D",
+    description: "Alex et Vincent partagent leur passion pour l'impression 3D avec la Bambu Lab.",
+    url: "https://2f3d.ca",
+    siteName: "2F3D",
+    images: [{ url: "https://2f3d.ca/2f3d-logo.jpg", width: 800, height: 800, alt: "2F3D" }],
+    locale: "fr_CA",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "2F3D",
+    description: "Les Deux Frères de l'Impression 3D",
+    images: ["https://2f3d.ca/2f3d-logo.jpg"],
+  },
 };
 
 export default function RootLayout({
