@@ -30,7 +30,7 @@ export default function HomePage() {
             >
               Facebook
             </a>
-            <Link href="/commandes" className="text-xs text-[#6e6e73] hover:text-[#1d1d1f] transition-colors hidden sm:block">Admin</Link>
+            <Link href="/commandes" className="text-xs text-[#6e6e73] hover:text-[#1d1d1f] transition-colors border border-[rgba(0,0,0,0.12)] rounded-full px-3 py-1.5">Admin</Link>
           </div>
         </div>
       </nav>
