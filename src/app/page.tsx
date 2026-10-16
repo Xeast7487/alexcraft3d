@@ -20,9 +20,10 @@ export default function HomePage() {
               <span className="text-[#1d1d1f]">2F</span><span className="text-[#f26217]">3D</span>
             </span>
           </div>
-          <div className="flex items-center gap-8">
-            <a href="#presentation" className="text-sm text-[#6e6e73] hover:text-[#1d1d1f] transition-colors hidden sm:block">Qui sommes-nous</a>
-            <a href="#partage" className="text-sm text-[#6e6e73] hover:text-[#1d1d1f] transition-colors hidden sm:block">Ce qu&apos;on partage</a>
+          <div className="flex items-center gap-4">
+            <a href="#presentation" className="text-sm text-[#6e6e73] hover:text-[#1d1d1f] transition-colors hidden lg:block">Qui sommes-nous</a>
+            <a href="#partage" className="text-sm text-[#6e6e73] hover:text-[#1d1d1f] transition-colors hidden lg:block">Ce qu&apos;on partage</a>
+            <Link href="/commandes" className="text-xs text-[#6e6e73] hover:text-[#1d1d1f] transition-colors border border-[rgba(0,0,0,0.15)] rounded-full px-3 py-1.5">Admin</Link>
             <a
               href="https://www.facebook.com/share/1DTXK3AwBV/?mibextid=wwXIfr"
               target="_blank" rel="noopener noreferrer"
@@ -30,7 +31,6 @@ export default function HomePage() {
             >
               Facebook
             </a>
-            <Link href="/commandes" className="text-xs text-[#6e6e73] hover:text-[#1d1d1f] transition-colors border border-[rgba(0,0,0,0.12)] rounded-full px-3 py-1.5">Admin</Link>
           </div>
         </div>
       </nav>
