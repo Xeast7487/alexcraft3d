@@ -8,7 +8,7 @@ import Printer3DIcon from "./Printer3DIcon";
 
 export default function NavWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isPublicPage = pathname === "/login" || pathname.startsWith("/suivi");
+  const isPublicPage = pathname === "/" || pathname === "/login" || pathname.startsWith("/suivi");
 
   if (isPublicPage) {
     return <main>{children}</main>;

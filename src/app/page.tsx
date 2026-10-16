@@ -1,126 +1,145 @@
-import { supabase } from "@/lib/supabase";
-import { formatMontant, statutColor, statutLabel } from "@/lib/utils";
+import Image from "next/image";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
+export const metadata = {
+  title: "2F3D — Les Deux Frères de l'Impression 3D",
+  description: "Alex et Vincent partagent leur passion pour l'impression 3D avec la Bambu Lab.",
+};
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
-export default async function DashboardPage() {
-  const [{ data: commandes }, { data: clients }, { data: items }, fournitures] =
-    await Promise.all([
-      supabase.from("ac3d_commandes").select("*").order("created_at", { ascending: false }),
-      supabase.from("ac3d_clients").select("id, nom"),
-      supabase.from("ac3d_items").select("commande_id, prix"),
-      fetch(`${SUPABASE_URL}/rest/v1/ac3d_fournitures?select=montant,est_facture`, {
-        headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
-        cache: "no-store",
-      }).then((r) => r.json() as Promise<{ montant: number; est_facture: boolean }[]>),
-    ]);
-
-  const totalPrix = (items || []).reduce((sum, i) => sum + Number(i.prix), 0);
-  const totalRecu = (commandes || []).reduce((sum, c) => sum + Number(c.montant_recu ?? 0), 0);
-  const enAttente = totalPrix - totalRecu;
-
-  const commandesActives = (commandes || []).filter((c) => c.statut !== "livre");
-
-  const fournituresTotales = (fournitures || []).reduce((sum, f) => sum + Number(f.montant), 0);
-  const fournituresnonfacturees = (fournitures || [])
-    .filter((f) => !f.est_facture)
-    .reduce((sum, f) => sum + Number(f.montant), 0);
-
-  const recentCommandes = (commandes || []).slice(0, 5);
-
+export default function HomePage() {
   return (
-    <div className="space-y-6 max-w-5xl">
-      <div>
-        <h1 className="text-2xl font-bold text-white">Tableau de bord</h1>
-        <p className="text-muted text-sm mt-1">Vue d'ensemble de ton activité</p>
-      </div>
+    <div className="min-h-screen bg-[#0d0b09] text-[#f0ede8]" style={{ fontFamily: "'Inter', sans-serif" }}>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatCard label="Clients" value={String(clients?.length ?? 0)} icon="👤" />
-        <StatCard label="Commandes actives" value={String(commandesActives.length)} icon="🔄" />
-        <StatCard label="À recevoir" value={formatMontant(Math.max(0, enAttente))} icon="💰" highlight />
-        <StatCard label="Fournitures à rembourser" value={formatMontant(fournituresnonfacturees)} icon="🛒" />
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <div className="bg-surface border border-border rounded-xl p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-white">Commandes récentes</h2>
-            <Link href="/commandes/new" className="text-xs bg-accent hover:bg-accent-hover text-white px-3 py-1 rounded-lg transition-colors">
-              + Nouvelle
-            </Link>
+      {/* NAV */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-[rgba(13,11,9,0.92)] backdrop-blur-md border-b border-[rgba(242,98,23,0.15)]">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Image src="/2f3d-logo.jpg" alt="2F3D" width={38} height={38} className="rounded-full object-cover" />
+            <span className="font-black text-2xl tracking-tight" style={{ fontFamily: "Georgia, serif" }}>
+              <span className="text-white">2F</span><span className="text-[#f26217]">3D</span>
+            </span>
           </div>
-          {recentCommandes.length === 0 ? (
-            <p className="text-muted text-sm">Aucune commande.</p>
-          ) : (
-            <div className="space-y-2">
-              {recentCommandes.map((c) => {
-                const itemsTotal = (items || [])
-                  .filter((i) => i.commande_id === c.id)
-                  .reduce((s, i) => s + Number(i.prix), 0);
-                return (
-                  <Link
-                    key={c.id}
-                    href={`/commandes/${c.id}`}
-                    className="flex items-center justify-between p-3 rounded-lg hover:bg-border transition-colors"
-                  >
-                    <div>
-                      <p className="text-sm font-medium text-white">{c.titre}</p>
-                      {(() => { const cl = (clients||[]).find(cl => cl.id === c.client_id); return cl ? <p className="text-xs text-muted">{cl.nom}</p> : null; })()}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {itemsTotal > 0 && (
-                        <span className="text-xs text-muted">{formatMontant(itemsTotal)}</span>
-                      )}
-                      <span className={`text-xs px-2 py-0.5 rounded-full border ${statutColor(c.statut)}`}>
-                        {statutLabel(c.statut)}
-                      </span>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
+          <div className="flex items-center gap-6">
+            <a href="#presentation" className="text-sm font-medium text-[#8a8078] hover:text-white transition-colors hidden sm:block">Qui sommes-nous</a>
+            <a href="#partage" className="text-sm font-medium text-[#8a8078] hover:text-white transition-colors hidden sm:block">Ce qu&apos;on partage</a>
+            <a href="https://www.facebook.com/share/1DTXK3AwBV/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer"
+              className="bg-[#1877f2] text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-[#1664d8] transition-colors">
+              Facebook
+            </a>
+            <Link href="/commandes" className="text-xs text-[#4a4440] hover:text-[#8a8078] transition-colors hidden sm:block">Admin</Link>
+          </div>
         </div>
+      </nav>
 
-        <div className="bg-surface border border-border rounded-xl p-5">
-          <h2 className="font-semibold text-white mb-4">Résumé financier</h2>
-          <div className="space-y-3">
-            <FinRow label="Valeur totale des commandes" value={formatMontant(totalPrix)} />
-            <FinRow label="Montant reçu" value={formatMontant(totalRecu)} color="text-status-livre" />
-            <FinRow label="Solde à recevoir" value={formatMontant(Math.max(0, enAttente))} color="text-status-print" />
-            <div className="border-t border-border pt-3">
-              <FinRow label="Fournitures commandées" value={formatMontant(fournituresTotales)} />
-              <FinRow label="À rembourser (carte)" value={formatMontant(fournituresnonfacturees)} color="text-status-print" />
+      {/* HERO */}
+      <section className="relative min-h-screen flex items-center justify-center text-center overflow-hidden">
+        <div className="absolute inset-0">
+          <Image src="/2f3d-banner.jpg" alt="2F3D" fill className="object-cover object-top brightness-[0.3] saturate-75" priority />
+          <div className="absolute inset-0 bg-gradient-to-b from-[rgba(13,11,9,0.2)] via-[rgba(13,11,9,0.1)] to-[#0d0b09]" />
+        </div>
+        <div className="relative z-10 flex flex-col items-center gap-5 px-6 pt-24 pb-16">
+          <Image src="/2f3d-logo.jpg" alt="2F3D" width={180} height={180} className="rounded-full border-2 border-[rgba(242,98,23,0.6)] shadow-[0_0_60px_rgba(242,98,23,0.3)]" />
+          <p className="text-sm font-bold tracking-[4px] uppercase text-[#8a8078]">Les Deux Frères de l&apos;Impression 3D</p>
+          <div className="flex gap-3 flex-wrap justify-center mt-2">
+            <a href="https://www.facebook.com/share/1DTXK3AwBV/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-[#1877f2] text-white font-semibold px-6 py-3 rounded-xl hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(24,119,242,0.35)] transition-all">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+              Page Facebook
+            </a>
+            <a href="#presentation" className="inline-flex items-center gap-2 border border-[#2e2a26] text-[#f0ede8] font-semibold px-6 py-3 rounded-xl hover:border-[#f26217] hover:text-[#f26217] transition-colors">
+              Découvrir
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* PRESENTATION */}
+      <section className="py-24" id="presentation">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-black mb-3">Qui sommes-nous ?</h2>
+            <div className="w-12 h-1 bg-[#f26217] rounded mx-auto mb-4" />
+            <p className="text-[#8a8078] max-w-md mx-auto">Deux frères, une passion, deux machines. On imprime, on teste, on partage.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Vincent */}
+            <div className="bg-[#1e1b18] border border-[#2e2a26] rounded-2xl p-8 hover:border-[rgba(242,98,23,0.4)] transition-colors">
+              <div className="w-14 h-14 bg-gradient-to-br from-[#f26217] to-[#d45510] rounded-2xl flex items-center justify-center text-white text-2xl font-black mb-5">V</div>
+              <h3 className="text-xl font-bold mb-2">Vincent</h3>
+              <div className="flex gap-2 flex-wrap mb-3">
+                <span className="bg-[rgba(242,98,23,0.12)] border border-[rgba(242,98,23,0.25)] text-[#f26217] text-xs font-semibold px-3 py-1 rounded-full">Bambu Lab A1</span>
+                <span className="bg-[rgba(242,98,23,0.12)] border border-[rgba(242,98,23,0.25)] text-[#f26217] text-xs font-semibold px-3 py-1 rounded-full">AMS Lite</span>
+              </div>
+              <p className="text-[#8a8078] text-sm leading-relaxed">Passionné de création fonctionnelle et de gadgets pratiques. Spécialisé dans les pièces mécaniques et les projets du quotidien.</p>
+            </div>
+            {/* Alex */}
+            <div className="bg-[#1e1b18] border border-[#2e2a26] rounded-2xl p-8 hover:border-[rgba(242,98,23,0.4)] transition-colors">
+              <div className="w-14 h-14 bg-gradient-to-br from-[#f26217] to-[#d45510] rounded-2xl flex items-center justify-center text-white text-2xl font-black mb-5">A</div>
+              <h3 className="text-xl font-bold mb-2">Alex</h3>
+              <div className="flex gap-2 flex-wrap mb-3">
+                <span className="bg-[rgba(242,98,23,0.12)] border border-[rgba(242,98,23,0.25)] text-[#f26217] text-xs font-semibold px-3 py-1 rounded-full">Bambu Lab P2S</span>
+                <span className="bg-[rgba(242,98,23,0.12)] border border-[rgba(242,98,23,0.25)] text-[#f26217] text-xs font-semibold px-3 py-1 rounded-full">AMS Pro 2</span>
+              </div>
+              <p className="text-[#8a8078] text-sm leading-relaxed">Accro aux prints multicolores et aux modèles techniques. Stream ses impressions en direct et partage ses réglages.</p>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
+      </section>
 
-function StatCard({ label, value, icon, highlight }: { label: string; value: string; icon: string; highlight?: boolean }) {
-  return (
-    <div className={`bg-surface border rounded-xl p-4 ${highlight ? "border-accent/50" : "border-border"}`}>
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-lg">{icon}</span>
-        <p className="text-xs text-muted">{label}</p>
-      </div>
-      <p className={`text-xl font-bold ${highlight ? "text-accent" : "text-white"}`}>{value}</p>
-    </div>
-  );
-}
+      {/* CE QU'ON PARTAGE */}
+      <section className="py-24 bg-[#141210]" id="partage">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-black mb-3">Ce qu&apos;on partage</h2>
+            <div className="w-12 h-1 bg-[#f26217] rounded mx-auto mb-4" />
+            <p className="text-[#8a8078] max-w-md mx-auto">Que tu démarres ou que tu sois déjà avancé, il y a quelque chose pour toi.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { icon: "🤝", title: "Entraide", sub: "Questions & Réponses", desc: "Un problème avec ton imprimante ? On est là pour aider." },
+              { icon: "💡", title: "Idées", sub: "Projets & Inspiration", desc: "Des modèles à imprimer, des idées créatives et des projets originaux." },
+              { icon: "⚙️", title: "Conseils", sub: "Réglages & Astuces", desc: "Les bons réglages de slicer, les profils testés, les trucs qui fonctionnent." },
+              { icon: "🛒", title: "Bons Plans", sub: "Matériel & Accessoires", desc: "Les meilleurs achats, les filaments qui valent la peine." },
+            ].map((f) => (
+              <div key={f.title} className="bg-[#1e1b18] border border-[#2e2a26] rounded-2xl p-6 hover:border-[rgba(242,98,23,0.35)] hover:-translate-y-1 transition-all">
+                <div className="text-2xl mb-3">{f.icon}</div>
+                <h3 className="font-bold text-base mb-1">{f.title}</h3>
+                <p className="text-[#f26217] text-xs font-semibold uppercase tracking-wide mb-2">{f.sub}</p>
+                <p className="text-[#8a8078] text-xs leading-relaxed">{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-function FinRow({ label, value, color }: { label: string; value: string; color?: string }) {
-  return (
-    <div className="flex justify-between text-sm">
-      <span className="text-muted">{label}</span>
-      <span className={`font-medium ${color || "text-white"}`}>{value}</span>
+      {/* CTA */}
+      <section className="py-24">
+        <div className="max-w-5xl mx-auto px-6 text-center">
+          <Image src="/2f3d-logo.jpg" alt="2F3D" width={100} height={100} className="rounded-full border-2 border-[rgba(242,98,23,0.4)] mx-auto mb-6" />
+          <h2 className="text-4xl font-black mb-4">Rejoins la communauté</h2>
+          <p className="text-[#8a8078] max-w-md mx-auto mb-8">Suis-nous sur Facebook pour ne rien manquer — nos créations, nos conseils, et nos lives d&apos;impression.</p>
+          <a href="https://www.facebook.com/share/1DTXK3AwBV/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 bg-[#1877f2] text-white font-semibold px-8 py-4 rounded-xl text-lg hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(24,119,242,0.35)] transition-all">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Page Facebook 2F3D
+          </a>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="bg-[#080706] border-t border-[#2e2a26] py-6">
+        <div className="max-w-5xl mx-auto px-6 flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <span className="font-black text-xl"><span className="text-white">2F</span><span className="text-[#f26217]">3D</span></span>
+            <span className="text-xs text-[#8a8078]">Les Deux Frères de l&apos;Impression 3D</span>
+          </div>
+          <div className="flex items-center gap-6">
+            <a href="https://www.facebook.com/share/1DTXK3AwBV/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="text-sm text-[#8a8078] hover:text-white transition-colors">Facebook</a>
+            <Link href="/commandes" className="text-xs text-[#4a4440] hover:text-[#8a8078] transition-colors">Admin</Link>
+          </div>
+        </div>
+      </footer>
+
     </div>
   );
 }
