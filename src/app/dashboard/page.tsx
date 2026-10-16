@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { getCurrentUser } from "@/lib/auth";
 import { formatMontant, statutColor, statutLabel } from "@/lib/utils";
 import Link from "next/link";
 
@@ -8,12 +9,13 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 export default async function DashboardPage() {
+  const user = await getCurrentUser();
   const [{ data: commandes }, { data: clients }, { data: items }, fournitures] =
     await Promise.all([
-      supabase.from("ac3d_commandes").select("*").order("created_at", { ascending: false }),
-      supabase.from("ac3d_clients").select("id, nom"),
+      supabase.from("ac3d_commandes").select("*").eq("utilisateur", user).order("created_at", { ascending: false }),
+      supabase.from("ac3d_clients").select("id, nom").eq("utilisateur", user),
       supabase.from("ac3d_items").select("commande_id, prix"),
-      fetch(`${SUPABASE_URL}/rest/v1/ac3d_fournitures?select=montant,est_facture`, {
+      fetch(`${SUPABASE_URL}/rest/v1/ac3d_fournitures?select=montant,est_facture&utilisateur=eq.${user}`, {
         headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
         cache: "no-store",
       }).then((r) => r.json() as Promise<{ montant: number; est_facture: boolean }[]>),
