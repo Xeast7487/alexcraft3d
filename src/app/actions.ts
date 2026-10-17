@@ -48,22 +48,23 @@ async function envoyerEmailStatut({
     ? `Bonjour ${clientNom},\n\nLa pièce <strong>${itemNom}</strong> de votre commande <strong>${commandeTitre}</strong> est maintenant : <strong>${label}</strong>.`
     : `Bonjour ${clientNom},\n\nVotre commande <strong>${commandeTitre}</strong> est maintenant : <strong>${label}</strong>.`;
 
-  await resend.emails.send({
+  const result = await resend.emails.send({
     from: "2F3D <info@2f3d.ca>",
     to: clientEmail,
     subject: sujet,
     html: `
       <div style="font-family:sans-serif;max-width:520px;margin:0 auto;background:#0f0f13;color:#e5e7eb;padding:32px;border-radius:12px">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px">
-          <span style="font-size:22px;font-weight:700;color:#a5b4fc">2F3D</span>
+          <span style="font-size:22px;font-weight:700;color:#fdba74">2F3D</span>
         </div>
         <p style="margin:0 0 16px">${contenu}</p>
-        ${suiviUrl ? `<a href="${suiviUrl}" style="display:inline-block;background:#6366f1;color:#fff;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:14px;margin-top:8px">Voir le suivi en ligne →</a>` : ""}
+        ${suiviUrl ? `<a href="${suiviUrl}" style="display:inline-block;background:#f26217;color:#fff;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:14px;margin-top:8px">Voir le suivi en ligne →</a>` : ""}
         <hr style="border:none;border-top:1px solid #27272a;margin:24px 0">
         <p style="font-size:12px;color:#71717a;margin:0">2F3D · info@2f3d.ca</p>
       </div>
     `,
   });
+  if (result.error) console.error("[Resend]", result.error);
 }
 
 // ── CLIENTS ──────────────────────────────────────────────────────────────────
