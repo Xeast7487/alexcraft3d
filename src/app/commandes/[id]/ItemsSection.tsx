@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { ajouterItem, modifierItem, supprimerItem, modifierStatutItem } from "@/app/actions";
+import { useState, useTransition } from "react";
+import { ajouterItem, modifierItem, supprimerItem, modifierStatutItem, demarrerImpression, arreterImpression } from "@/app/actions";
 import { Item } from "@/lib/supabase";
 import { formatMontant, formatTemps, statutColor, statutLabel, calculerPrix } from "@/lib/utils";
 
@@ -16,6 +16,7 @@ function ItemRow({ item, commandeId, onEdit, onDelete }: {
 }) {
   const [statut, setStatut] = useState<Statut>(item.statut as Statut);
   const [toggling, setToggling] = useState(false);
+  const [printing, startPrint] = useTransition();
 
   async function cycleStatut() {
     if (toggling) return;
@@ -28,33 +29,76 @@ function ItemRow({ item, commandeId, onEdit, onDelete }: {
   }
 
   return (
-    <div className="flex items-center justify-between p-3 bg-bg rounded-lg border border-border/50">
-      <div className="flex-1">
-        <div className="flex items-center gap-2 flex-wrap">
-          <p className="text-sm font-medium text-white">{item.nom_piece}</p>
-          <button
-            onClick={cycleStatut}
-            disabled={toggling}
-            className={`text-xs px-1.5 py-0.5 rounded-full border transition-all hover:opacity-80 active:scale-95 ${statutColor(statut)} ${toggling ? "opacity-50" : ""}`}
-            title="Cliquer pour changer le statut"
-          >
-            {statutLabel(statut)}
-          </button>
+    <div className="p-3 bg-bg rounded-lg border border-border/50">
+      <div className="flex items-center justify-between">
+        <div className="flex-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <p className="text-sm font-medium text-white">{item.nom_piece}</p>
+            <button
+              onClick={cycleStatut}
+              disabled={toggling}
+              className={`text-xs px-1.5 py-0.5 rounded-full border transition-all hover:opacity-80 active:scale-95 ${statutColor(statut)} ${toggling ? "opacity-50" : ""}`}
+              title="Cliquer pour changer le statut"
+            >
+              {statutLabel(statut)}
+            </button>
+            {item.en_impression && (
+              <span className="text-xs text-[#f26217] font-medium animate-pulse">
+                ● {item.progression}%
+              </span>
+            )}
+          </div>
+          <p className="text-xs text-muted mt-0.5">
+            {item.grammes > 0 && `${item.grammes}g`}
+            {item.grammes > 0 && (item.temps_heures > 0 || item.temps_minutes > 0) && " · "}
+            {formatTemps(item.temps_heures, item.temps_minutes)}
+            {item.taux_horaire !== 2 && ` @ ${item.taux_horaire}$/h`}
+          </p>
         </div>
-        <p className="text-xs text-muted mt-0.5">
-          {item.grammes > 0 && `${item.grammes}g`}
-          {item.grammes > 0 && (item.temps_heures > 0 || item.temps_minutes > 0) && " · "}
-          {formatTemps(item.temps_heures, item.temps_minutes)}
-          {item.taux_horaire !== 2 && ` @ ${item.taux_horaire}$/h`}
-        </p>
-      </div>
-      <div className="flex items-center gap-3">
-        <p className="text-sm font-semibold text-white">{formatMontant(item.prix)}</p>
-        <div className="flex gap-1">
-          <button onClick={onEdit} className="text-xs text-muted hover:text-white px-2 py-1 rounded hover:bg-border">✏️</button>
-          <button onClick={onDelete} className="text-xs text-red-400 hover:text-red-300 px-2 py-1 rounded hover:bg-border">×</button>
+        <div className="flex items-center gap-2">
+          <p className="text-sm font-semibold text-white">{formatMontant(item.prix)}</p>
+          {item.en_impression ? (
+            <button
+              onClick={() => startPrint(() => arreterImpression(item.id, commandeId))}
+              disabled={printing}
+              className="text-xs text-orange-400 hover:text-orange-300 px-2 py-1 rounded hover:bg-border"
+              title="Arrêter le suivi"
+            >
+              ⏹
+            </button>
+          ) : (
+            <button
+              onClick={() => startPrint(() => demarrerImpression(item.id, commandeId))}
+              disabled={printing}
+              className="text-xs text-muted hover:text-[#f26217] px-2 py-1 rounded hover:bg-border"
+              title="Démarrer l'impression"
+            >
+              ▶
+            </button>
+          )}
+          <div className="flex gap-1">
+            <button onClick={onEdit} className="text-xs text-muted hover:text-white px-2 py-1 rounded hover:bg-border">✏️</button>
+            <button onClick={onDelete} className="text-xs text-red-400 hover:text-red-300 px-2 py-1 rounded hover:bg-border">×</button>
+          </div>
         </div>
       </div>
+      {item.en_impression && (
+        <div className="mt-2">
+          <div className="h-1.5 bg-border rounded-full overflow-hidden">
+            <div
+              className="h-full bg-[#f26217] rounded-full transition-all duration-500"
+              style={{ width: `${item.progression}%` }}
+            />
+          </div>
+          {item.temps_restant > 0 && (
+            <p className="text-xs text-muted mt-1">
+              ~{item.temps_restant < 60
+                ? `${item.temps_restant} min restantes`
+                : `${Math.floor(item.temps_restant / 60)}h${item.temps_restant % 60 > 0 ? ` ${item.temps_restant % 60}min` : ""} restantes`}
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

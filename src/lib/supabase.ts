@@ -39,6 +39,9 @@ export type Item = {
   prix_original: number | null;
   statut: "a_imprimer" | "en_cours" | "complete" | "livre";
   notes: string;
+  progression: number;
+  temps_restant: number;
+  en_impression: boolean;
 };
 
 export type Paiement = {

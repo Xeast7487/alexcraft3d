@@ -258,6 +258,17 @@ export async function supprimerItem(id: number, commande_id: number) {
   revalidatePath(`/commandes/${commande_id}`);
 }
 
+export async function demarrerImpression(id: number, commande_id: number) {
+  await supabase.from("ac3d_items").update({ en_impression: false }).eq("en_impression", true);
+  await supabase.from("ac3d_items").update({ en_impression: true, progression: 0, statut: "en_cours" }).eq("id", id);
+  revalidatePath(`/commandes/${commande_id}`);
+}
+
+export async function arreterImpression(id: number, commande_id: number) {
+  await supabase.from("ac3d_items").update({ en_impression: false }).eq("id", id);
+  revalidatePath(`/commandes/${commande_id}`);
+}
+
 // ── PAIEMENTS ────────────────────────────────────────────────────────────────
 
 export async function ajouterPaiement(commande_id: number, formData: FormData) {

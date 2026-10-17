@@ -1,5 +1,6 @@
 import { formatMontant, formatDate, totalCommande } from "@/lib/utils";
 import Printer3DIcon from "@/components/Printer3DIcon";
+import SuiviLiveItems from "@/components/SuiviLiveItems";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 
@@ -295,68 +296,17 @@ export default async function SuiviPage({
                     {tx.pieces(totalItems)}
                   </p>
                 </div>
-                <div className="p-3 space-y-2">
-                  {itemList.map((item, idx) => {
-                    const isLivre = item.statut === "livre";
-                    const isEnCours = item.statut === "en_cours";
-                    return (
-                      <div
-                        key={item.id}
-                        className={`relative rounded-xl p-4 overflow-hidden card-anim ${isEnCours ? "glow-blue" : ""}`}
-                        style={{
-                          animationDelay: `${150 + idx * 60}ms`,
-                          background: isLivre
-                            ? "rgba(34,197,94,0.05)"
-                            : isEnCours
-                            ? "rgba(59,130,246,0.08)"
-                            : "rgba(255,255,255,0.03)",
-                          border: isLivre
-                            ? "1px solid rgba(34,197,94,0.25)"
-                            : isEnCours
-                            ? "1px solid rgba(59,130,246,0.35)"
-                            : "1px solid rgba(242,98,23,0.12)",
-                        }}
-                      >
-                        {isEnCours && (
-                          <div className="absolute left-0 right-0 h-px pointer-events-none" style={{
-                            background: "linear-gradient(90deg, transparent, rgba(59,130,246,0.6), transparent)",
-                            animation: "scanLine 1.5s linear infinite",
-                          }} />
-                        )}
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-base"
-                              style={{
-                                background: isLivre
-                                  ? "rgba(34,197,94,0.15)"
-                                  : isEnCours
-                                  ? "rgba(59,130,246,0.15)"
-                                  : "rgba(242,98,23,0.08)",
-                              }}>
-                              {isLivre ? "✅" : isEnCours ? <span className="nozzle inline-flex"><Printer3DIcon size={16} color="#60a5fa" /></span> : "⏳"}
-                            </div>
-                            <span className="text-sm font-medium">{item.nom_piece}</span>
-                          </div>
-                          <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{
-                            background: isLivre
-                              ? "rgba(34,197,94,0.15)"
-                              : isEnCours
-                              ? "rgba(59,130,246,0.15)"
-                              : "rgba(242,98,23,0.1)",
-                            color: isLivre ? "#4ade80" : isEnCours ? "#60a5fa" : "#fdba74",
-                            border: isLivre
-                              ? "1px solid rgba(34,197,94,0.3)"
-                              : isEnCours
-                              ? "1px solid rgba(59,130,246,0.3)"
-                              : "1px solid rgba(242,98,23,0.25)",
-                          }}>
-                            {tx.statusLabel[item.statut as keyof typeof tx.statusLabel] ?? item.statut}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                <SuiviLiveItems
+                  initialItems={itemList.map((i: any) => ({
+                    id: i.id,
+                    nom_piece: i.nom_piece,
+                    statut: i.statut,
+                    progression: i.progression ?? 0,
+                    temps_restant: i.temps_restant ?? 0,
+                    en_impression: i.en_impression ?? false,
+                  }))}
+                  statusLabels={tx.statusLabel}
+                />
               </div>
             </div>
           )}
