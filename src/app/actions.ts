@@ -339,3 +339,64 @@ export async function genererLienSuivi(commandeId: number): Promise<string> {
   revalidatePath(`/commandes/${commandeId}`);
   return token;
 }
+
+// ── DEVIS ─────────────────────────────────────────────────────────────────────
+
+export async function modifierStatutDevis(id: number, statut: string) {
+  await supabase.from("ac3d_devis").update({ statut }).eq("id", id);
+  revalidatePath("/devis");
+}
+
+export async function supprimerDevis(id: number) {
+  await supabase.from("ac3d_devis").delete().eq("id", id);
+  revalidatePath("/devis");
+}
+
+export async function convertirDevisEnCommande(devisId: number) {
+  const utilisateur = await getUser();
+
+  const { data: devis } = await supabase
+    .from("ac3d_devis")
+    .select("*")
+    .eq("id", devisId)
+    .single();
+
+  if (!devis) return;
+
+  let client_id: number | null = null;
+  const { data: existingClient } = await supabase
+    .from("ac3d_clients")
+    .select("id")
+    .eq("email", devis.email)
+    .eq("utilisateur", utilisateur)
+    .maybeSingle();
+
+  if (existingClient) {
+    client_id = existingClient.id;
+  } else {
+    const { data: newClient } = await supabase
+      .from("ac3d_clients")
+      .insert({ nom: devis.nom, email: devis.email, telephone: devis.telephone || "", utilisateur })
+      .select()
+      .single();
+    if (newClient) client_id = newClient.id;
+  }
+
+  const titre = devis.description.length > 60
+    ? devis.description.slice(0, 57) + "..."
+    : devis.description;
+
+  const { data: commande } = await supabase
+    .from("ac3d_commandes")
+    .insert({ titre, client_id, notes: devis.notes || "", utilisateur })
+    .select()
+    .single();
+
+  await supabase.from("ac3d_devis").update({ statut: "accepte" }).eq("id", devisId);
+
+  revalidatePath("/devis");
+  revalidatePath("/commandes");
+  if (client_id) revalidatePath(`/clients/${client_id}`);
+
+  redirect(`/commandes/${commande.id}`);
+}

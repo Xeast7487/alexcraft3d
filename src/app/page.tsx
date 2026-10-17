@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import ChatWidget from "@/components/ChatWidget";
+import DevisForm from "@/components/DevisForm";
 
 export const metadata = {
   title: "2F3D — Les Deux Frères de l'Impression 3D",
@@ -23,6 +24,7 @@ export default function HomePage() {
           <div className="flex items-center gap-4">
             <a href="#presentation" className="text-sm text-[#6e6e73] hover:text-[#1d1d1f] transition-colors hidden lg:block">Qui sommes-nous</a>
             <a href="#partage" className="text-sm text-[#6e6e73] hover:text-[#1d1d1f] transition-colors hidden lg:block">Ce qu&apos;on partage</a>
+            <a href="#devis" className="text-sm text-[#6e6e73] hover:text-[#1d1d1f] transition-colors hidden lg:block">Soumission</a>
             <Link href="/commandes" className="text-xs text-[#6e6e73] hover:text-[#1d1d1f] transition-colors border border-[rgba(0,0,0,0.15)] rounded-full px-3 py-1.5">Admin</Link>
             <a
               href="https://www.facebook.com/share/1DTXK3AwBV/?mibextid=wwXIfr"
@@ -123,6 +125,44 @@ export default function HomePage() {
                 <p className="text-[#6e6e73] leading-relaxed text-sm">{f.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="max-w-6xl mx-auto px-6"><div className="h-px bg-[rgba(0,0,0,0.07)]" /></div>
+
+      {/* DEVIS */}
+      <section className="py-32" id="devis">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+            <div>
+              <p className="text-xs font-bold tracking-[4px] uppercase text-[#f26217] mb-5">Soumission gratuite</p>
+              <h2 className="text-5xl sm:text-6xl font-black text-[#1d1d1f] mb-6 leading-tight tracking-tight">
+                Un projet<br />en tête ?
+              </h2>
+              <p className="text-[#6e6e73] leading-relaxed text-[15px] mb-6">
+                Décrivez votre pièce, joignez votre fichier STL si vous en avez un, et on vous revient avec un prix rapidement.
+              </p>
+              <ul className="space-y-3">
+                {[
+                  "Réponse sous 24h",
+                  "Soumission sans engagement",
+                  "Filaments PLA, PETG, ABS et plus",
+                ].map((item) => (
+                  <li key={item} className="flex items-center gap-3 text-sm text-[#6e6e73]">
+                    <span className="w-5 h-5 rounded-full bg-[#f26217]/10 flex items-center justify-center shrink-0">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#f26217" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    </span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="bg-white rounded-2xl border border-[rgba(0,0,0,0.07)] p-8 shadow-sm">
+              <DevisForm />
+            </div>
           </div>
         </div>
       </section>
