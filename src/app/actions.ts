@@ -49,7 +49,7 @@ async function envoyerEmailStatut({
     : `Bonjour ${clientNom},\n\nVotre commande <strong>${commandeTitre}</strong> est maintenant : <strong>${label}</strong>.`;
 
   await resend.emails.send({
-    from: "2F3D <onboarding@resend.dev>",
+    from: "2F3D <info@2f3d.ca>",
     to: clientEmail,
     subject: sujet,
     html: `
