@@ -22,8 +22,7 @@ export default function LoginPage() {
     });
 
     if (res.ok) {
-      router.push("/commandes");
-      router.refresh();
+      window.location.href = "/commandes";
     } else {
       setError("Identifiants incorrects.");
       setLoading(false);

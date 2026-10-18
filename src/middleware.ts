@@ -14,7 +14,8 @@ export function middleware(req: NextRequest) {
     pathname.startsWith("/login") ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon") ||
-    pathname.match(/\.(jpg|jpeg|png|svg|ico|webp)$/);
+    pathname.startsWith("/manifest") ||
+    /\.(jpg|jpeg|png|svg|ico|webp|webmanifest|json)$/.test(pathname);
 
   if (isPublic) return NextResponse.next();
 
