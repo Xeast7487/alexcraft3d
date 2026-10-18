@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import ChatWidget from "@/components/ChatWidget";
 import DevisForm from "@/components/DevisForm";
 
 export const metadata = {
@@ -216,7 +215,6 @@ export default function HomePage() {
         </div>
       </footer>
 
-      <ChatWidget />
 
     </div>
   );

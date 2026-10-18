@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const PUBLIC_PATHS = ["/", "/login", "/suivi", "/api/login", "/api/contact", "/api/devis"];
+const PUBLIC_PATHS = ["/", "/login", "/suivi", "/api/login", "/api/devis"];
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -9,7 +9,6 @@ export function middleware(req: NextRequest) {
     pathname === "/" ||
     pathname.startsWith("/suivi") ||
     pathname.startsWith("/api/login") ||
-    pathname.startsWith("/api/contact") ||
     pathname.startsWith("/api/devis") ||
     pathname.startsWith("/login") ||
     pathname.startsWith("/_next") ||
