@@ -191,13 +191,13 @@ function ItemForm({ commandeId, item, onClose }: { commandeId: number; item: Ite
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-xs text-muted">Grammes (g)</label>
-          <input name="grammes" type="number" step="0.1" min="0" value={grammes}
+          <input name="grammes" type="number" step="any" min="0" value={grammes}
             onChange={(e) => setGrammes(Number(e.target.value))}
             className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-white text-sm mt-1 focus:outline-none focus:border-accent" />
         </div>
         <div>
           <label className="text-xs text-muted">Taux $/h</label>
-          <input name="taux_horaire" type="number" step="0.5" min="0" value={taux}
+          <input name="taux_horaire" type="number" step="any" min="0" value={taux}
             onChange={(e) => setTaux(Number(e.target.value))}
             className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-white text-sm mt-1 focus:outline-none focus:border-accent" />
         </div>
@@ -205,13 +205,13 @@ function ItemForm({ commandeId, item, onClose }: { commandeId: number; item: Ite
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-xs text-muted">Temps (heures)</label>
-          <input name="temps_heures" type="number" min="0" value={heures}
+          <input name="temps_heures" type="number" step="any" min="0" value={heures}
             onChange={(e) => setHeures(Number(e.target.value))}
             className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-white text-sm mt-1 focus:outline-none focus:border-accent" />
         </div>
         <div>
           <label className="text-xs text-muted">Temps (minutes)</label>
-          <input name="temps_minutes" type="number" min="0" max="59" value={minutes}
+          <input name="temps_minutes" type="number" step="any" min="0" value={minutes}
             onChange={(e) => setMinutes(Number(e.target.value))}
             className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-white text-sm mt-1 focus:outline-none focus:border-accent" />
         </div>
