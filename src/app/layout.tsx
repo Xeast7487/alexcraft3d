@@ -5,6 +5,7 @@ import Link from "next/link";
 import LogoutButton from "@/components/LogoutButton";
 import MobileNav from "@/components/MobileNav";
 import NavWrapper from "@/components/NavWrapper";
+import TawkChat from "@/components/TawkChat";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -39,6 +40,7 @@ export default function RootLayout({
         <NavWrapper>
           {children}
         </NavWrapper>
+        <TawkChat />
       </body>
     </html>
   );
