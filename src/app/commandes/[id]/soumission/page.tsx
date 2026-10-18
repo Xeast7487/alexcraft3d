@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import { formatMontant, formatTemps, totalCommande } from "@/lib/utils";
 import { notFound } from "next/navigation";
@@ -36,8 +37,15 @@ export default async function SoumissionPage({ params }: { params: { id: string 
       <div className="max-w-2xl mx-auto p-12">
         <div className="flex justify-between items-start mb-10">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">🖨️ 2F3D</h1>
-            <p className="text-gray-500 text-sm mt-1">Impression 3D sur mesure</p>
+            <div className="flex items-center gap-3">
+              <Image src="/2f3d-logo.jpg" alt="2F3D" width={40} height={40} className="rounded-full object-cover" />
+              <div>
+                <h1 className="text-2xl font-black text-gray-900 tracking-tight">
+                  <span className="text-gray-900">2F</span><span className="text-[#f26217]">3D</span>
+                </h1>
+                <p className="text-gray-500 text-xs">Impression 3D sur mesure</p>
+              </div>
+            </div>
           </div>
           <div className="text-right">
             <p className="text-2xl font-bold text-gray-900">SOUMISSION</p>
@@ -122,7 +130,7 @@ export default async function SoumissionPage({ params }: { params: { id: string 
         </div>
 
         <div className="mt-16 pt-8 border-t border-gray-200 text-center text-sm text-gray-400">
-          <p>Merci pour votre confiance ! 🖨️</p>
+          <p>Merci pour votre confiance !</p>
           <p className="mt-1">info@2f3d.ca</p>
         </div>
       </div>
