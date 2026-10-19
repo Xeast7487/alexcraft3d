@@ -9,6 +9,12 @@ import TawkChat from "@/components/TawkChat";
 
 const inter = Inter({ subsets: ["latin"] });
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export const metadata: Metadata = {
   title: "2F3D — Les Deux Frères de l'Impression 3D",
   description: "Alex et Vincent partagent leur passion pour l'impression 3D avec la Bambu Lab.",

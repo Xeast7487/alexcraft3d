@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { usePathname } from "next/navigation";
+
+const ADMIN_ROUTES = ["/commandes", "/clients", "/devis", "/fournitures", "/dashboard", "/login"];
 
 declare global {
   interface Window {
@@ -24,6 +27,9 @@ const PROPERTY_ID = "6ad5312c0d940634ca4822d6";
 const WIDGET_ID   = "1k58cg5nr";
 
 export default function TawkChat() {
+  const pathname = usePathname();
+  const isAdmin  = ADMIN_ROUTES.some(r => pathname.startsWith(r));
+
   const [loaded, setLoaded]   = useState(false);
   const [online, setOnline]   = useState(false);
   const [open, setOpen]       = useState(false);
@@ -67,7 +73,7 @@ export default function TawkChat() {
     }
   }, [open]);
 
-  if (!loaded) return null;
+  if (!loaded || isAdmin) return null;
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">

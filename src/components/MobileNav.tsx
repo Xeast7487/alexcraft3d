@@ -30,15 +30,18 @@ export default function MobileNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-surface border-t border-border">
-      <div className="flex items-center justify-around px-2 py-2">
+    <nav
+      className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-surface border-t border-border"
+      style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+    >
+      <div className="flex items-center justify-around px-1 pt-2 pb-1">
         {links.map((link) => {
           const active = pathname.startsWith(link.href);
           return (
             <Link
               key={link.href}
               href={link.href}
-              className={`flex flex-col items-center gap-1 px-4 py-1.5 rounded-xl transition-colors ${
+              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-colors min-w-[56px] ${
                 active ? "text-accent" : "text-muted"
               }`}
             >
