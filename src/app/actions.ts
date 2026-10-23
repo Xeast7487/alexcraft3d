@@ -37,7 +37,7 @@ async function envoyerEmailStatut({
   const resend = new Resend(process.env.RESEND_API_KEY);
   const label = STATUT_LABEL[nouveauStatut] ?? nouveauStatut;
   const suiviUrl = suiviToken
-    ? `${process.env.NEXT_PUBLIC_APP_URL ?? "https://2f3d.ca"}/suivi/${suiviToken}`
+    ? `https://2f3d.ca?token=${suiviToken}#suivi`
     : null;
 
   const sujet = itemNom
