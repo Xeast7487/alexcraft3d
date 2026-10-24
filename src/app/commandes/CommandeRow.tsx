@@ -19,6 +19,7 @@ type CommandeRow = {
   created_at: string;
   ac3d_clients: Client;
   ac3d_items: { prix: number }[];
+  ac3d_fournitures: { montant: number }[];
 };
 
 export default function CommandeRow({
@@ -32,6 +33,8 @@ export default function CommandeRow({
   const [statut, setStatut] = useState<Statut>(c.statut as Statut);
   const [toggling, setToggling] = useState(false);
   const total = (c.ac3d_items || []).reduce((sum, i) => sum + i.prix, 0);
+  const totalFournitures = (c.ac3d_fournitures || []).reduce((sum, f) => sum + (f.montant || 0), 0);
+  const profit = total - totalFournitures;
   const restant = total - c.montant_recu;
 
   async function cycleStatut(e: React.MouseEvent) {
@@ -63,8 +66,13 @@ export default function CommandeRow({
         <div className="flex items-center gap-3 flex-shrink-0">
           <div className="text-right hidden sm:block">
             <p className="text-sm font-medium text-white">{formatMontant(total)}</p>
+            {totalFournitures > 0 && (
+              <p className={`text-xs font-medium ${profit >= 0 ? "text-green-400" : "text-red-400"}`}>
+                Profit : {formatMontant(profit)}
+              </p>
+            )}
             {restant > 0 && (
-              <p className="text-xs text-status-print">−{formatMontant(restant)}</p>
+              <p className="text-xs text-status-print">−{formatMontant(restant)} restant</p>
             )}
           </div>
           <button

@@ -26,6 +26,8 @@ export default async function CommandeDetailPage({ params }: { params: { id: str
   const client = (clients || []).find((c) => c.id === commande.client_id) || null;
 
   const total = totalCommande(items || []);
+  const totalFournitures = (fournitures || []).reduce((sum, f) => sum + (f.montant || 0), 0);
+  const profit = total - totalFournitures;
   const restant = total - commande.montant_recu;
 
   return (
@@ -55,7 +57,7 @@ export default async function CommandeDetailPage({ params }: { params: { id: str
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="bg-surface border border-border rounded-xl p-4">
           <p className="text-xs text-muted">Total</p>
           <p className="text-xl font-bold text-white mt-1">{formatMontant(total)}</p>
@@ -69,6 +71,19 @@ export default async function CommandeDetailPage({ params }: { params: { id: str
           <p className={`text-xl font-bold mt-1 ${restant > 0 ? "text-status-print" : "text-muted"}`}>
             {restant > 0 ? formatMontant(restant) : "Payé ✓"}
           </p>
+        </div>
+        <div className={`border rounded-xl p-4 ${totalFournitures === 0 ? "bg-surface border-border" : profit >= 0 ? "bg-green-950/20 border-green-800/40" : "bg-red-950/20 border-red-800/40"}`}>
+          <p className="text-xs text-muted">Profit final</p>
+          {totalFournitures === 0 ? (
+            <p className="text-xl font-bold text-muted mt-1">—</p>
+          ) : (
+            <>
+              <p className={`text-xl font-bold mt-1 ${profit >= 0 ? "text-green-400" : "text-red-400"}`}>
+                {formatMontant(profit)}
+              </p>
+              <p className="text-xs text-muted mt-0.5">Fournitures : {formatMontant(totalFournitures)}</p>
+            </>
+          )}
         </div>
       </div>
 
